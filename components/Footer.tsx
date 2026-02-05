@@ -59,7 +59,7 @@ const Footer: React.FC<FooterProps> = ({ companySettings }) => {
               <h2 className="text-lg font-bold">Nascimento</h2>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Excelência e transparência em negócios imobiliários de alto padrão. Encontre o imóvel dos seus sonhos conosco.
+              Excelência e transparência em negócios imobiliários. Encontre o imóvel que precisa.
             </p>
           </div>
 
