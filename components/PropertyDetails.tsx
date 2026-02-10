@@ -236,7 +236,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property, onBack }) =
             </div>
 
             {/* Key Specs */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-y border-gray-100 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 border-y border-gray-100 py-8">
               <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-50">
                 <span className="text-3xl font-light text-[#4A5D23] mb-1">{property.area}</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Metros Quadrados</span>
@@ -252,6 +252,14 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property, onBack }) =
               <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-50">
                 <span className="text-3xl font-light text-[#4A5D23] mb-1">{property.parkingSpaces}</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Vagas</span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-50">
+                <span className="text-3xl font-light text-[#4A5D23] mb-1">{property.pets ? 'Sim' : 'Não'}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Aceita Pets</span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-50">
+                <span className="text-3xl font-light text-[#4A5D23] mb-1">{property.furnished ? 'Sim' : 'Não'}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Mobiliado</span>
               </div>
             </div>
 

@@ -43,6 +43,18 @@ export interface Client {
   city?: string;
   state?: string;
   zip?: string;
+  locator_name?: string;
+  locator_cpf?: string;
+  locator_email?: string;
+  locator_phone?: string;
+  contract_start_date?: string;
+  contract_end_date?: string;
+  contract_duration?: number;
+  contract_value?: number;
+  payment_due_day?: number;
+  id_document_url?: string;
+  proof_of_address_url?: string;
+  income_proof_url?: string;
 }
 
 export interface Partner {

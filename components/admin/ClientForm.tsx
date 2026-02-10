@@ -12,6 +12,7 @@ interface ClientFormProps {
 
 const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess }) => {
     const [clientData, setClientData] = useState({
+        // Tenant Info
         name: '',
         cpf: '',
         email: '',
@@ -19,7 +20,18 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         address: '',
         city: '',
         state: '',
-        zip: ''
+        zip: '',
+        // Locator Info
+        locator_name: '',
+        locator_cpf: '',
+        locator_email: '',
+        locator_phone: '',
+        // Contract Info
+        contract_start_date: '',
+        contract_end_date: '',
+        contract_duration: '',
+        payment_due_day: '',
+        contract_value: ''
     });
 
     // File states
@@ -29,10 +41,25 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
 
     const [propertySearch, setPropertySearch] = useState('');
     const [propertyCode, setPropertyCode] = useState('');
+    const [selectedPropertyPrice, setSelectedPropertyPrice] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // Auto-fetch address when CEP changes
+    // Filter properties for auto-complete
+    const filteredProperties = propertySearch.length > 0
+        ? properties.filter(p => p.title.toLowerCase().includes(propertySearch.toLowerCase()))
+        : [];
+
+    const handleSelectProperty = (property: Property) => {
+        setPropertySearch(property.title);
+        setPropertyCode(property.id);
+        setSelectedPropertyPrice(property.price.toString());
+        // Auto-fill contract value
+        setClientData(prev => ({ ...prev, contract_value: property.price.toString() }));
+        setShowSuggestions(false);
+    };
+
+    // Auto-fetch tenant address when CEP changes
     React.useEffect(() => {
         const fetchAddress = async () => {
             const cep = clientData.zip;
@@ -53,17 +80,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         };
         fetchAddress();
     }, [clientData.zip]);
-
-    // Filter properties for auto-complete
-    const filteredProperties = propertySearch.length > 0
-        ? properties.filter(p => p.title.toLowerCase().includes(propertySearch.toLowerCase()))
-        : [];
-
-    const handleSelectProperty = (property: Property) => {
-        setPropertySearch(property.title);
-        setPropertyCode(property.id);
-        setShowSuggestions(false);
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -99,18 +115,37 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
             const incomeProofUrl = await uploadFile(incomeProofFile, 'income_proof');
 
             const { error } = await supabase.from('clients').insert([{
-                ...clientData,
+                name: clientData.name,
+                cpf: clientData.cpf,
+                email: clientData.email,
+                phone: clientData.phone,
+                address: clientData.address,
+                city: clientData.city,
+                state: clientData.state,
+                zip: clientData.zip,
                 property_interest: propertySearch,
-                status: 'Em análise',
+
+                locator_name: clientData.locator_name,
+                locator_cpf: clientData.locator_cpf,
+                locator_email: clientData.locator_email,
+                locator_phone: clientData.locator_phone,
+
+                contract_start_date: clientData.contract_start_date || null,
+                contract_end_date: clientData.contract_end_date || null,
+                contract_duration: clientData.contract_duration ? Number(clientData.contract_duration) : null,
+                contract_value: clientData.contract_value ? Number(clientData.contract_value) : null,
+                payment_due_day: clientData.payment_due_day ? Number(clientData.payment_due_day) : null,
+
+                status: 'Contrato Ativo',
                 id_document_url: idDocumentUrl,
                 proof_of_address_url: proofAddressUrl,
                 income_proof_url: incomeProofUrl
             }]);
 
             if (error) {
-                alert('Erro ao salvar cliente: ' + error.message);
+                alert('Erro ao salvar contrato: ' + error.message);
             } else {
-                alert('Cliente salvo com sucesso!');
+                alert('Contrato salvo com sucesso!');
                 onSuccess();
             }
         } catch (err: any) {
@@ -124,82 +159,94 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         <div className="animate-fadeIn space-y-10">
             <div className="flex items-center justify-between">
                 <button onClick={onCancel} className="flex items-center text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-black transition-colors"><svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>Voltar para Lista</button>
-                <h3 className="text-xl font-bold text-black">Cadastrar Novo Cliente</h3>
+                <h3 className="text-xl font-bold text-black">Novo Contrato</h3>
             </div>
 
-            <form className="space-y-8 pb-32">
-                {/* Dados Pessoais */}
+            <form className="space-y-4 pb-32">
+
+                {/* Section 1: Dados do Locador */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Dados Pessoais</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Dados do Locador</h4>
                     </div>
-                    <div className="p-8 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="p-5 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Nome Completo</label>
-                                <input type="text" name="name" value={clientData.name} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Nome do cliente" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Nome/Razão Social</label>
+                                <input type="text" name="locator_name" value={clientData.locator_name} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Nome do Locador" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">CPF</label>
-                                <input type="text" name="cpf" value={clientData.cpf} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="000.000.000-00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CNPJ/CPF</label>
+                                <input type="text" name="locator_cpf" value={clientData.locator_cpf} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="000.000.000-00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Email</label>
-                                <input type="email" name="email" value={clientData.email} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="email@exemplo.com" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Telefone</label>
+                                <input type="text" name="locator_phone" value={clientData.locator_phone} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="(00) 00000-0000" />
                             </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Telefone</label>
-                                <input type="text" name="phone" value={clientData.phone} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="(11) 99999-9999" />
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Email</label>
+                                <input type="email" name="locator_email" value={clientData.locator_email} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="email@exemplo.com" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Endereço */}
+                {/* Section 2: Dados do Locatário */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Endereço de Residência</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Dados do Locatário</h4>
                     </div>
-                    <div className="p-8 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                            <div className="md:col-span-3">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">CEP</label>
-                                <input type="text" name="zip" value={clientData.zip} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="00000-000" />
+                    <div className="p-5 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Nome/Razão Social</label>
+                                <input type="text" name="name" value={clientData.name} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Nome do Locatário" />
                             </div>
-                            <div className="md:col-span-9">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Logradouro</label>
-                                <input type="text" name="address" value={clientData.address} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Rua, Av..." />
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CNPJ/CPF</label>
+                                <input type="text" name="cpf" value={clientData.cpf} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="000.000.000-00" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Telefone</label>
+                                <input type="text" name="phone" value={clientData.phone} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="(11) 99999-9999" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Email</label>
+                                <input type="email" name="email" value={clientData.email} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="email@exemplo.com" />
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Tenant Address Fields - Inline */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 border-t border-gray-100 pt-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Cidade</label>
-                                <input type="text" name="city" value={clientData.city} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Cidade" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CEP</label>
+                                <input type="text" name="zip" value={clientData.zip} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="00000-000" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Estado</label>
-                                <input type="text" name="state" value={clientData.state} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="UF" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Cidade</label>
+                                <input type="text" name="city" value={clientData.city} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Cidade" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Endereço</label>
+                                <input type="text" name="address" value={clientData.address} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Rua, Av..." />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Dados da Locação */}
+                {/* Section 3: Informações do Imóvel */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Dados da Locação</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Informações do Imóvel</h4>
                     </div>
-                    <div className="p-8 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="p-5 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Código do Imóvel</label>
-                                <input type="text" value={propertyCode} readOnly className="w-full p-3 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-sm" placeholder="Cód." />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Cód. do Imóvel</label>
+                                <input type="text" value={propertyCode} readOnly className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" placeholder="Cód." />
                             </div>
                             <div className="md:col-span-3 relative">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Imóvel Pretendido</label>
-                                <input type="text" value={propertySearch} onChange={(e) => { setPropertySearch(e.target.value); setShowSuggestions(true); if (e.target.value === '') setPropertyCode(''); }} onFocus={() => setShowSuggestions(true)} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Digite para buscar o imóvel..." />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Imóvel Pretendido</label>
+                                <input type="text" value={propertySearch} onChange={(e) => { setPropertySearch(e.target.value); setShowSuggestions(true); if (e.target.value === '') setPropertyCode(''); }} onFocus={() => setShowSuggestions(true)} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Digite para buscar o imóvel..." />
                                 {showSuggestions && filteredProperties.length > 0 && (
                                     <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                         {filteredProperties.map((property) => (
@@ -208,42 +255,78 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                                     </ul>
                                 )}
                             </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Valor Anunciado</label>
+                                <input type="text" readOnly value={selectedPropertyPrice ? `R$ ${Number(selectedPropertyPrice).toFixed(2)}` : ''} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Documentação */}
+                {/* Section 4: Prazos e Vencimentos */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Documentação</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Prazos e Vencimentos</h4>
                     </div>
-                    <div className="p-8 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-5 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Documento de Identidade (RG/CNH)</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Data Inicial</label>
+                                <input type="date" name="contract_start_date" value={clientData.contract_start_date} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Data Final</label>
+                                <input type="date" name="contract_end_date" value={clientData.contract_end_date} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Total em Meses</label>
+                                <input type="number" name="contract_duration" value={clientData.contract_duration} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="30" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Vencimento Fatura</label>
+                                <select name="payment_due_day" value={clientData.payment_due_day} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
+                                    <option value="">Selecione</option>
+                                    {[1, 5, 10, 15, 20, 25, 30].map(day => (
+                                        <option key={day} value={day}>{day}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Section 5: Documentação */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Documentação</h4>
+                    </div>
+                    <div className="p-5 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Documento de Identidade (RG/CNH)</label>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
                                     onChange={(e) => setIdDocumentFile(e.target.files?.[0] || null)}
-                                    className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Comprovante de Residência</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Comprovante de Residência</label>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
                                     onChange={(e) => setProofAddressFile(e.target.files?.[0] || null)}
-                                    className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Comprovante de Renda</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Comprovante de Renda</label>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
                                     onChange={(e) => setIncomeProofFile(e.target.files?.[0] || null)}
-                                    className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                         </div>
@@ -253,7 +336,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
             </form>
             <div className="fixed bottom-0 right-0 left-0 lg:left-[288px] bg-white border-t border-gray-100 p-6 flex justify-end gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-20">
                 <button onClick={onCancel} className="px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all">Cancelar</button>
-                <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all disabled:opacity-50">{loading ? 'Salvando...' : 'Finalizar Cadastro'}</button>
+                <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all disabled:opacity-50">{loading ? 'Salvando...' : 'Finalizar Contrato'}</button>
             </div>
         </div>
     );
