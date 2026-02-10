@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Property } from '../../types';
 import { supabase } from '../../lib/supabaseClient';
+import { fetchAddressByCep } from '../../lib/utils';
 
 interface ClientFormProps {
     properties: Property[];
@@ -30,6 +31,28 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
     const [propertyCode, setPropertyCode] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Auto-fetch address when CEP changes
+    React.useEffect(() => {
+        const fetchAddress = async () => {
+            const cep = clientData.zip;
+            if (cep) {
+                const cleanCep = cep.replace(/\D/g, '');
+                if (cleanCep.length === 8) {
+                    const addressData = await fetchAddressByCep(cleanCep);
+                    if (addressData) {
+                        setClientData(prev => ({
+                            ...prev,
+                            city: addressData.city,
+                            address: addressData.street,
+                            state: addressData.state
+                        }));
+                    }
+                }
+            }
+        };
+        fetchAddress();
+    }, [clientData.zip]);
 
     // Filter properties for auto-complete
     const filteredProperties = propertySearch.length > 0

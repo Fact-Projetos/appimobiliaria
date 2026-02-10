@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Property } from '../../types';
 import { supabase } from '../../lib/supabaseClient';
+import { fetchAddressByCep } from '../../lib/utils';
 
 interface PropertyFormProps {
     editingProperty: Property | null;
@@ -42,6 +43,29 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
     const [inspectionFiles, setInspectionFiles] = useState<FileList | null>(null);
 
     const [loading, setLoading] = useState(false);
+
+    // Auto-fetch address when CEP changes
+    useEffect(() => {
+        const fetchAddress = async () => {
+            const cep = formData.zip;
+            if (cep) {
+                const cleanCep = cep.replace(/\D/g, '');
+                if (cleanCep.length === 8) {
+                    const addressData = await fetchAddressByCep(cleanCep);
+                    if (addressData) {
+                        setFormData(prev => ({
+                            ...prev,
+                            city: addressData.city,
+                            neighborhood: addressData.neighborhood,
+                            street: addressData.street,
+                            state: addressData.state
+                        }));
+                    }
+                }
+            }
+        };
+        fetchAddress();
+    }, [formData.zip]);
 
     // Populate form if editing
     useEffect(() => {
@@ -228,18 +252,18 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 <h3 className="text-xl font-bold text-black">{editingProperty ? 'Editar Imóvel' : 'Novo Cadastro de Imóvel'}</h3>
             </div>
 
-            <form className="space-y-8 pb-32">
+            <form className="space-y-4 pb-32">
                 {/* Dados do Imóvel Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Dados do Imóvel</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Dados do Imóvel</h4>
                     </div>
-                    <div className="p-8 space-y-6">
+                    <div className="p-5 space-y-3">
                         {/* Row 1 */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Tipo de Imóvel</label>
-                                <select name="type" value={formData.type} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tipo de Imóvel</label>
+                                <select name="type" value={formData.type} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
                                     <option value="Casa">Casa</option>
                                     <option value="Apartamento">Apartamento</option>
                                     <option value="Terreno">Terreno</option>
@@ -247,87 +271,87 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                                 </select>
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Objetivo</label>
-                                <select name="operation" value={formData.operation} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Objetivo</label>
+                                <select name="operation" value={formData.operation} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
                                     <option value="Venda">Venda</option>
                                     <option value="Aluguel">Aluguel</option>
                                 </select>
                             </div>
-                            <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Título do Anúncio</label>
-                                <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Título do Anúncio" />
+                            <div className="col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Título do Anúncio</label>
+                                <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Título do Anúncio" />
                             </div>
                         </div>
 
                         {/* Row 2: Address */}
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">CEP</label>
-                                <input type="text" name="zip" value={formData.zip} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="00000-000" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CEP</label>
+                                <input type="text" name="zip" value={formData.zip} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="00000-000" />
                             </div>
                             <div className="md:col-span-6">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Logradouro</label>
-                                <input type="text" name="street" value={formData.street} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Rua, Avenida..." />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Logradouro</label>
+                                <input type="text" name="street" value={formData.street} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Rua, Avenida..." />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Nº</label>
-                                <input type="text" name="number" value={formData.number} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="123" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Nº</label>
+                                <input type="text" name="number" value={formData.number} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="123" />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Complemento</label>
-                                <input type="text" name="complement" value={formData.complement} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Apto 101" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Complemento</label>
+                                <input type="text" name="complement" value={formData.complement} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Apto 101" />
                             </div>
                         </div>
 
                         {/* Row 3: City */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Bairro</label>
-                                <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Bairro" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Bairro</label>
+                                <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Bairro" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Cidade</label>
-                                <input type="text" name="city" value={formData.city} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Cidade" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Cidade</label>
+                                <input type="text" name="city" value={formData.city} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Cidade" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">UF</label>
-                                <input type="text" name="state" value={formData.state} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="SP" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">UF</label>
+                                <input type="text" name="state" value={formData.state} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="SP" />
                             </div>
                         </div>
 
                         {/* Row 4: Specs */}
-                        <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">M²</label>
-                                <input type="number" name="area" value={formData.area} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">M²</label>
+                                <input type="number" name="area" value={formData.area} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Quartos</label>
-                                <input type="number" name="bedrooms" value={formData.bedrooms} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Quartos</label>
+                                <input type="number" name="bedrooms" value={formData.bedrooms} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Banheiros</label>
-                                <input type="number" name="bathrooms" value={formData.bathrooms} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Banheiros</label>
+                                <input type="number" name="bathrooms" value={formData.bathrooms} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Vagas</label>
-                                <input type="number" name="parkingSpaces" value={formData.parkingSpaces} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Vagas</label>
+                                <input type="number" name="parkingSpaces" value={formData.parkingSpaces} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0" />
                             </div>
                             <div className="flex flex-col justify-center">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Aceita Pets</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Aceita Pets</label>
                                 <div className="flex items-center gap-3">
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" name="pets" checked={formData.pets} onChange={handleChange} className="w-5 h-5 text-[#4A5D23] rounded focus:ring-[#4A5D23] border-gray-300" />
-                                        <span className="text-sm">Sim</span>
+                                        <input type="checkbox" name="pets" checked={formData.pets} onChange={handleChange} className="w-4 h-4 text-[#4A5D23] rounded focus:ring-[#4A5D23] border-gray-300" />
+                                        <span className="text-xs">Sim</span>
                                     </label>
                                 </div>
                             </div>
                             <div className="flex flex-col justify-center">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Mobiliado</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mobiliado</label>
                                 <div className="flex items-center gap-3">
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" name="furnished" checked={formData.furnished} onChange={handleChange} className="w-5 h-5 text-[#4A5D23] rounded focus:ring-[#4A5D23] border-gray-300" />
-                                        <span className="text-sm">Sim</span>
+                                        <input type="checkbox" name="furnished" checked={formData.furnished} onChange={handleChange} className="w-4 h-4 text-[#4A5D23] rounded focus:ring-[#4A5D23] border-gray-300" />
+                                        <span className="text-xs">Sim</span>
                                     </label>
                                 </div>
                             </div>
@@ -335,42 +359,42 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
 
                         {/* Description */}
                         <div>
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Descrição do Imóvel</label>
-                            <textarea name="description" rows={4} value={formData.description} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="Descrição completa..." />
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Descrição do Imóvel</label>
+                            <textarea name="description" rows={3} value={formData.description} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Descrição completa..." />
                         </div>
                     </div>
                 </div>
 
                 {/* Valore Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Valores</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Valores</h4>
                     </div>
-                    <div className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+                    <div className="p-5">
+                        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Aluguel/Venda</label>
-                                <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0,00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Aluguel/Venda</label>
+                                <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0,00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Condomínio</label>
-                                <input type="number" name="condoPrice" value={formData.condoPrice} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0,00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Condomínio</label>
+                                <input type="number" name="condoPrice" value={formData.condoPrice} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0,00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Seguro Incêndio</label>
-                                <input type="number" name="fireInsurance" value={formData.fireInsurance} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0,00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Seguro Incêndio</label>
+                                <input type="number" name="fireInsurance" value={formData.fireInsurance} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0,00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">IPTU</label>
-                                <input type="number" name="iptuPrice" value={formData.iptuPrice} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0,00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">IPTU</label>
+                                <input type="number" name="iptuPrice" value={formData.iptuPrice} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0,00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Taxa de Serviço</label>
-                                <input type="number" name="serviceCharge" value={formData.serviceCharge} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm" placeholder="0,00" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Taxa de Serviço</label>
+                                <input type="number" name="serviceCharge" value={formData.serviceCharge} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="0,00" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Total (R$)</label>
-                                <input type="text" readOnly value={total} className="w-full p-3 bg-gray-100 border border-transparent rounded-lg text-gray-800 font-bold outline-none cursor-not-allowed" />
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Total (R$)</label>
+                                <input type="text" readOnly value={total} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-800 font-bold outline-none cursor-not-allowed text-xs" />
                             </div>
                         </div>
                     </div>
@@ -378,40 +402,40 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
 
                 {/* Imagens Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-[#4A5D23] px-6 py-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white">Imagens e Vistoria</h4>
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Imagens e Vistoria</h4>
                     </div>
-                    <div className="p-8">
-                        <div className="mb-6">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Foto de Capa {editingProperty && '(Deixe vazio para manter)'}</label>
+                    <div className="p-5">
+                        <div className="mb-4">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Foto de Capa {editingProperty && '(Deixe vazio para manter)'}</label>
                             <input
                                 type="file"
                                 accept="image/*"
                                 onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
-                                className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                             />
-                            {editingProperty && <p className="text-xs text-green-600 mt-1">Imagem atual mantida se não enviar nova.</p>}
+                            {editingProperty && <p className="text-[10px] text-green-600 mt-1">Imagem atual mantida se não enviar nova.</p>}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Galeria de Fotos (Adicionar Novas)</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Galeria de Fotos (Adicionar Novas)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     multiple
                                     onChange={(e) => setGalleryFiles(e.target.files)}
-                                    className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Fotos da Vistoria (Adicionar Novas)</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Fotos da Vistoria (Adicionar Novas)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     multiple
                                     onChange={(e) => setInspectionFiles(e.target.files)}
-                                    className="w-full p-3 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                         </div>
