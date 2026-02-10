@@ -108,7 +108,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                     </div>
                 </section>
             </form>
-            <div className="fixed bottom-0 right-0 left-[288px] bg-white border-t border-gray-100 p-6 flex justify-end gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-20">
+            <div className="fixed bottom-0 right-0 left-0 lg:left-[288px] bg-white border-t border-gray-100 p-6 flex justify-end gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-20">
                 <button onClick={onCancel} className="px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all">Cancelar</button>
                 <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all">{loading ? 'Salvando...' : 'Finalizar Cadastro'}</button>
             </div>

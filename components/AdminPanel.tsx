@@ -196,11 +196,56 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     document.body.removeChild(link);
   };
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const activeItem = menuItems.find(i => i.id === currentTab);
 
   return (
     <div className="flex min-h-screen bg-[#f8f9fa]">
-      {/* Sidebar */}
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden font-sans">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl p-6 flex flex-col animate-slide-in">
+            <div className="flex justify-between items-center mb-8">
+              <div className="font-bold text-lg">Menu</div>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Fechar menu"
+              >
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            
+            <nav className="space-y-2 flex-1">
+              {menuItems.map(item => (
+                <button 
+                  key={item.id} 
+                  onClick={() => { 
+                    setCurrentTab(item.id as AdminTab); 
+                    setIsAddingProperty(false); 
+                    setIsAddingClient(false);
+                    setIsMobileMenuOpen(false);
+                  }} 
+                  className={`w-full flex items-center px-4 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${currentTab === item.id ? 'bg-[#4A5D23] text-white shadow-lg shadow-[#4A5D23]/20' : 'text-gray-400 hover:bg-gray-50 hover:text-black'}`}
+                >
+                  <span className={`mr-3 ${currentTab === item.id ? 'text-white' : 'text-gray-400'}`}>{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="mt-auto pt-6 border-t border-gray-50">
+              <button onClick={onLogout} className="w-full flex items-center justify-center px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition-colors">
+                Sair do Sistema
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar (Desktop) */}
       <aside className="w-72 bg-white border-r border-gray-100 fixed h-full z-30 hidden lg:flex flex-col">
         <div className="p-8">
           <div className="flex items-center gap-3 mb-12">
@@ -219,8 +264,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 lg:ml-72 p-8 lg:p-12">
-        <div className="lg:hidden flex justify-between items-center mb-8"><div className="font-bold">Nascimento Admin</div><button onClick={onLogout} className="text-red-500 text-sm">Sair</button></div>
+      <main className="flex-1 lg:ml-72 p-4 lg:p-12 pb-20 overflow-x-hidden">
+        {/* Mobile Header */}
+        <div className="lg:hidden flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 -ml-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              aria-label="Abrir menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+            <div className="font-bold text-gray-800">Nascimento Admin</div>
+          </div>
+          <div className="w-8 h-8 bg-[#4A5D23] rounded-lg flex items-center justify-center text-white">
+             <span className="font-bold text-xs">NA</span>
+          </div>
+        </div>
 
         {isAddingClient ? (
           <ClientForm
@@ -242,21 +302,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <MyDataForm onSuccess={onSettingsUpdate} />
         ) : (
           <>
-            <header className="flex justify-between items-end mb-10 min-h-[50px]">
+            <header className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
               <div>
-                <h2 className="text-3xl font-light text-black mb-2">{activeItem ? activeItem.label : 'Início'}</h2>
+                <h2 className="text-2xl lg:text-3xl font-light text-black mb-2">{activeItem ? activeItem.label : 'Início'}</h2>
                 <p className="text-sm text-gray-400">Gerencie as informações do sistema.</p>
               </div>
 
               {currentTab === 'properties' && (
-                <button onClick={handleCreateClick} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center gap-2">
+                <button onClick={handleCreateClick} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                   Novo Imóvel
                 </button>
               )}
 
               {currentTab === 'clients' && (
-                <button onClick={() => setIsAddingClient(true)} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center gap-2">
+                <button onClick={() => setIsAddingClient(true)} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                   Novo Cliente
                 </button>
@@ -272,8 +332,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             )}
 
             {currentTab === 'properties' && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                   <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imóvel</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Valor</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ações</th></tr></thead>
                   <tbody className="divide-y divide-gray-50">
                     {properties.length > 0 ? properties.map(p => (
@@ -307,8 +367,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
               </div>
             )}
             {currentTab === 'clients' && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                   <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cliente</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contato</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Interesse</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contrato</th></tr></thead>
                   <tbody className="divide-y divide-gray-50">
                     {clients.length > 0 ? clients.map(client => (
@@ -327,8 +387,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
               </div>
             )}
             {currentTab === 'contacts' && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
                       <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Data</th>
