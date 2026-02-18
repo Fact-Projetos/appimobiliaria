@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Property } from '../../types';
+import { Property, Client } from '../../types';
 import { supabase } from '../../lib/supabaseClient';
 import { fetchAddressByCep } from '../../lib/utils';
 
@@ -8,31 +8,44 @@ interface ClientFormProps {
     properties: Property[];
     onCancel: () => void;
     onSuccess: () => void;
+    editingClient?: Client | null;
 }
 
-const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess }) => {
+const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess, editingClient }) => {
     const [clientData, setClientData] = useState({
         // Tenant Info
-        name: '',
-        cpf: '',
-        email: '',
-        phone: '',
-        address: '',
-        city: '',
-        state: '',
-        zip: '',
+        name: editingClient?.name || '',
+        cpf: editingClient?.cpf || '',
+        email: editingClient?.email || '',
+        phone: editingClient?.phone || '',
+        address: editingClient?.address || '',
+        city: editingClient?.city || '',
+        state: editingClient?.state || '',
+        zip: editingClient?.zip || '',
         // Locator Info
-        locator_name: '',
-        locator_cpf: '',
-        locator_email: '',
-        locator_phone: '',
+        locator_name: editingClient?.locator_name || '',
+        locator_cpf: editingClient?.locator_cpf || '',
+        locator_email: editingClient?.locator_email || '',
+        locator_phone: editingClient?.locator_phone || '',
         // Contract Info
-        contract_start_date: '',
-        contract_end_date: '',
-        contract_duration: '',
-        payment_due_day: '',
-        contract_value: ''
+        contract_start_date: editingClient?.contract_start_date || '',
+        contract_end_date: editingClient?.contract_end_date || '',
+        contract_duration: editingClient?.contract_duration?.toString() || '',
+        payment_due_day: editingClient?.payment_due_day?.toString() || '',
+        contract_value: editingClient?.contract_value?.toString() || ''
     });
+
+    // Add another state for property interest if it comes from the object
+    React.useEffect(() => {
+        if (editingClient?.property_interest) {
+            setPropertySearch(editingClient.property_interest);
+            const prop = properties.find(p => p.title === editingClient.property_interest);
+            if (prop) {
+                setPropertyCode(prop.id);
+                setSelectedPropertyPrice(prop.price.toString());
+            }
+        }
+    }, [editingClient, properties]);
 
     // File states
     const [idDocumentFile, setIdDocumentFile] = useState<File | null>(null);
@@ -114,7 +127,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
             const proofAddressUrl = await uploadFile(proofAddressFile, 'proof_address');
             const incomeProofUrl = await uploadFile(incomeProofFile, 'income_proof');
 
-            const { error } = await supabase.from('clients').insert([{
+            const payload = {
                 name: clientData.name,
                 cpf: clientData.cpf,
                 email: clientData.email,
@@ -136,14 +149,21 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                 contract_value: clientData.contract_value ? Number(clientData.contract_value) : null,
                 payment_due_day: clientData.payment_due_day ? Number(clientData.payment_due_day) : null,
 
-                status: 'Contrato Ativo',
-                id_document_url: idDocumentUrl,
-                proof_of_address_url: proofAddressUrl,
-                income_proof_url: incomeProofUrl
-            }]);
+                status: editingClient?.status || 'Contrato Ativo',
+                id_document_url: idDocumentUrl || editingClient?.id_document_url,
+                proof_of_address_url: proofAddressUrl || editingClient?.proof_of_address_url,
+                income_proof_url: incomeProofUrl || editingClient?.income_proof_url
+            };
 
-            if (error) {
-                alert('Erro ao salvar contrato: ' + error.message);
+            let result;
+            if (editingClient?.id) {
+                result = await supabase.from('clients').update(payload).eq('id', editingClient.id);
+            } else {
+                result = await supabase.from('clients').insert([payload]);
+            }
+
+            if (result.error) {
+                alert('Erro ao salvar contrato: ' + result.error.message);
             } else {
                 alert('Contrato salvo com sucesso!');
                 onSuccess();
@@ -159,7 +179,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         <div className="animate-fadeIn space-y-10">
             <div className="flex items-center justify-between">
                 <button onClick={onCancel} className="flex items-center text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-black transition-colors"><svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>Voltar para Lista</button>
-                <h3 className="text-xl font-bold text-black">Novo Contrato</h3>
+                <h3 className="text-xl font-bold text-black">{editingClient ? 'Editar Contrato' : 'Novo Contrato'}</h3>
             </div>
 
             <form className="space-y-4 pb-32">
@@ -336,7 +356,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
             </form>
             <div className="fixed bottom-0 right-0 left-0 lg:left-[288px] bg-white border-t border-gray-100 p-6 flex justify-end gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-20">
                 <button onClick={onCancel} className="px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all">Cancelar</button>
-                <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all disabled:opacity-50">{loading ? 'Salvando...' : 'Finalizar Contrato'}</button>
+                <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all disabled:opacity-50">{loading ? 'Salvando...' : (editingClient ? 'Salvar Alterações' : 'Finalizar Contrato')}</button>
             </div>
         </div>
     );

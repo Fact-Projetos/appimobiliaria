@@ -48,6 +48,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
   const [currentTab, setCurrentTab] = useState<AdminTab>('overview');
   const [isAddingProperty, setIsAddingProperty] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
 
   // Estado para controlar qual imóvel está sendo editado (null = criando novo)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -114,6 +115,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     window.open(`mailto:${email}`, '_blank');
   };
 
+  const handleEditClient = (client: Client) => {
+    setEditingClient(client);
+    setIsAddingClient(true);
+  };
+
+  const handleDeleteClient = async (id: number) => {
+    if (window.confirm('Tem certeza que deseja excluir este contrato/cliente permanentemente?')) {
+      const { error } = await supabase.from('clients').delete().eq('id', id);
+      if (error) {
+        alert('Erro ao excluir: ' + error.message);
+      } else {
+        alert('Contrato excluído com sucesso.');
+        fetchClients();
+      }
+    }
+  };
+
   // Função de Excluir Imóvel
   const handleDeleteProperty = async (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este imóvel permanentemente?')) {
@@ -137,18 +155,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     setIsAddingProperty(true);
   };
 
-  const generateContractDoc = (clientName: string, clientCpf: string, propertyName: string) => {
+  const generateContractDoc = (client: Client) => {
+    // Encontrar o imóvel relacionado para pegar valores de IPTU, condomínio, etc.
+    const property = properties.find(p => p.title === client.property_interest);
+
+    // Preparar dados
+    const locatorName = client.locator_name || 'NASCIMENTO NEGÓCIOS IMOBILIÁRIOS';
+    const locatorCpf = client.locator_cpf || '00.000.000/0001-00';
+    const tenantName = client.name || '';
+    const tenantCpf = client.cpf || '';
+
+    const propType = property?.type || 'Imóvel';
+    const propAddress = property ? `${property.street}, ${property.number}${property.complement ? `, ${property.complement}` : ''} - ${property.neighborhood}, ${property.city}/${property.state}` : client.property_interest;
+
+    const startDate = client.contract_start_date ? new Date(client.contract_start_date).toLocaleDateString('pt-BR') : '-';
+    const endDate = client.contract_end_date ? new Date(client.contract_end_date).toLocaleDateString('pt-BR') : '-';
+    const duration = client.contract_duration || 30;
+
+    const rent = client.contract_value || property?.price || 0;
+    const condo = property?.condoPrice || 0;
+    const fire = property?.fireInsurance || 0;
+    const iptu = property?.iptuPrice || 0;
+    const service = property?.serviceCharge || 0;
+    const totalValue = rent + condo + fire + iptu + service;
+    const caucao = rent * 2;
+
+    const dueDay = client.payment_due_day || 20;
+
+    const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
     const today = new Date();
-    const startDate = today.toLocaleDateString('pt-BR');
-    const endDateObj = new Date(today);
-    endDateObj.setMonth(endDateObj.getMonth() + 30);
-    const endDate = endDateObj.toLocaleDateString('pt-BR');
-    const day = today.getDate();
-    const month = today.toLocaleString('pt-BR', { month: 'long' });
-    const year = today.getFullYear();
-    const fullDate = `${day} de ${month} de ${year}`;
-    const rentalValue = "R$ 2.300,00 (Dois mil e trezentos reais)";
-    const guaranteeValue = "R$ 4.600,00 (Quatro mil e seiscentos reais)";
+    const fullDate = `${today.getDate()} de ${today.toLocaleString('pt-BR', { month: 'long' })} de ${today.getFullYear()}`;
 
     const content = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -157,40 +194,174 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <title>Contrato de Locação</title>
         <style>
           body { font-family: 'Arial', sans-serif; font-size: 11pt; line-height: 1.5; text-align: justify; margin: 20px; }
-          h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
+          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
           .highlight { font-weight: bold; }
-          p { margin-bottom: 10px; }
+          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 10pt; }
+          .summary-table th, .summary-table td { border: 1px solid black; padding: 6px; }
+          .summary-header { background-color: #f3f4f6; font-weight: bold; text-align: center; text-transform: uppercase; }
+          .clause-title { font-weight: bold; margin-top: 15px; display: block; text-align: center; text-transform: uppercase; }
           .signature-box { margin-top: 50px; text-align: center; }
           .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; margin-top: 40px; padding-top: 5px; }
         </style>
       </head>
       <body>
-        <h1>CONTRATO DE LOCAÇÃO DE IMÓVEL RESIDENCIAL/COMERCIAL</h1>
-        <p><span class="highlight">LOCADOR:</span> NASCIMENTO NEGÓCIOS IMOBILIÁRIOS (Representando o Proprietário), CNPJ 00.000.000/0001-00.</p>
-        <p><span class="highlight">LOCATÁRIO:</span> ${clientName.toUpperCase()}, portador(a) do CPF sob o nº ${clientCpf}, residente e domiciliado(a) em ____________________________________________________________________.</p>
-        <p><span class="highlight">IMÓVEL:</span> ${propertyName.toUpperCase()}.</p>
-        <p><span class="highlight">PRAZO DA LOCAÇÃO:</span> 30 meses</p>
-        <p><span class="highlight">INÍCIO:</span> ${startDate}</p>
-        <p><span class="highlight">TÉRMINO:</span> ${endDate}</p>
-        <p><span class="highlight">VALOR MENSAL:</span> ${rentalValue}.</p>
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="font-size: 16pt;">QUADRO DEMONSTRATIVO</h2>
+        </div>
+
+        <table class="summary-table">
+          <tr class="summary-header">
+            <td colspan="4">Informação das Partes</td>
+          </tr>
+          <tr>
+            <td colspan="2"><span class="highlight">Nome / Razão Social</span></td>
+            <td><span class="highlight">CPF / CNPJ</span></td>
+            <td><span class="highlight">Qualificação</span></td>
+          </tr>
+          <tr>
+            <td colspan="2">${locatorName}</td>
+            <td>${locatorCpf}</td>
+            <td>Locador</td>
+          </tr>
+          <tr>
+            <td colspan="2">${tenantName}</td>
+            <td>${tenantCpf}</td>
+            <td>Locatário</td>
+          </tr>
+
+          <tr class="summary-header">
+            <td colspan="4">Informações do Imóvel</td>
+          </tr>
+          <tr>
+            <td><span class="highlight">Tipo do Imóvel</span></td>
+            <td colspan="2"><span class="highlight">Endereço do Imóvel</span></td>
+            <td><span class="highlight">Finalidade</span></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">${propType}</td>
+            <td colspan="2">${propAddress}</td>
+            <td style="text-align: center;">Residencial</td>
+          </tr>
+
+          <tr class="summary-header">
+            <td colspan="4">Informações de Vigência</td>
+          </tr>
+          <tr>
+            <td><span class="highlight">Data Inicial</span></td>
+            <td colspan="2"><span class="highlight">Data Final</span></td>
+            <td><span class="highlight">Total em Meses</span></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;">${startDate}</td>
+            <td colspan="2" style="text-align: center;">${endDate}</td>
+            <td style="text-align: center;">${duration} meses</td>
+          </tr>
+
+          <tr class="summary-header">
+            <td colspan="4">Informações de Valores e Vencimentos</td>
+          </tr>
+          <tr>
+            <td colspan="2"><span class="highlight">Descrição</span></td>
+            <td><span class="highlight">Valor</span></td>
+            <td><span class="highlight">Fatura Vencimento</span></td>
+          </tr>
+          <tr>
+            <td colspan="2">Aluguel</td>
+            <td style="text-align: right;">${formatCurrency(rent)}</td>
+            <td rowspan="6" style="text-align: center; vertical-align: middle;">
+              ${dueDay} de cada mês
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">Condomínio</td>
+            <td style="text-align: right;">${formatCurrency(condo)}</td>
+          </tr>
+          <tr>
+            <td colspan="2">Seguro Incêndio</td>
+            <td style="text-align: right;">${formatCurrency(fire)}</td>
+          </tr>
+          <tr>
+            <td colspan="2">IPTU</td>
+            <td style="text-align: right;">${formatCurrency(iptu)}</td>
+          </tr>
+          <tr>
+            <td colspan="2">Taxa de Serviços</td>
+            <td style="text-align: right;">${formatCurrency(service)}</td>
+          </tr>
+          <tr style="font-weight: bold;">
+            <td colspan="2">Total geral</td>
+            <td style="text-align: right;">${formatCurrency(totalValue)}</td>
+          </tr>
+        </table>
+
+        <p>O LOCADOR e o LOCATÁRIO, acima qualificados, resolvem ajustar a locação do imóvel retro descrito, que ora contratam, sob as cláusulas e condições seguintes:</p>
+
+        <p><span class="clause-title">CLÁUSULA PRIMEIRA</span>
+        A locação vigerá pelo período estabelecido no preâmbulo deste instrumento, devendo o LOCATÁRIO restituí-lo, findo o prazo, independente de notificação judicial ou extrajudicial.</p>
+
+        <p><span class="clause-title">CLÁUSULA SEGUNDA</span>
+        O valor mensal da locação será aquele pactuado no preâmbulo deste instrumento, e os aluguéis serão reajustados na periodicidade também retro mencionada, ou no menor período que a legislação vier a permitir, com base no índice IPCA\\IBGE.</p>
+
+        <p><span class="clause-title">CLÁUSULA TERCEIRA</span>
+        O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária na conta <span class="highlight">POUPANÇA:1039808-8, AGÊNCIA 0354 BANCO BRADESCO</span>, ou outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.
         <br/>
-        <p>O LOCADOR e o LOCATÁRIO, acima qualificados, resolvem ajustar a locação do imóvel retro descrito.</p>
+        Parágrafo único: A eventual tolerância em qualquer atraso ou demora no pagamento de aluguéis, impostos, taxas, seguro, ou demais encargos de responsabilidade do LOCATÁRIO, em hipótese alguma poderá ser considerada como modificação das condições do contrato, que permanecerão em vigor para todos os efeitos.</p>
+
+        <p><span class="clause-title">CLÁUSULA QUARTA</span>
+        Além do aluguel são encargos do LOCATÁRIO o imposto predial (IPTU), o seguro de incêndio, a taxa de luz, força, saneamento, esgoto, condomínio e quaisquer outras que recaiam ou venham a recair sobre o imóvel locado, que serão pagas às repartições arrecadadoras respectivas. Incumbe ao LOCATÁRIO, também, satisfazer por sua conta as exigências das autoridades sanitárias de higiene, ou do condomínio.</p>
+
+        <p><span class="clause-title">CLÁUSULA QUINTA</span>
+        O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
+
+        <p><span class="clause-title">CLÁUSULA SEXTA</span>
+        O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitantes, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.
         <br/>
-        <p style="text-align: right;">São Paulo, ${fullDate}.</p>
-        <br/><br/>
+        Parágrafo único: O LOCADOR, por si ou por preposto, poderá visitar o imóvel, durante a locação, para verificar o exato cumprimento das cláusulas deste contrato.</p>
+
+        <p><span class="clause-title">CLÁUSULA SÉTIMA</span>
+        A infração de qualquer das cláusulas deste contrato faz incorrer o infrator na multa irredutível no valor da caução de <span class="highlight">${formatCurrency(caucao)}</span> ou parcial, sobre o aluguel anual em vigor à época da infração, e importa na sua rescisão de pleno direito, independentemente de qualquer notificação ou aviso, sujeitando-se a parte inadimplente ao pagamento das perdas e danos que forem apuradas.</p>
+
+        <p><span class="clause-title">CLÁUSULA OITAVA</span>
+        Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
+
+        <p><span class="clause-title">CLÁUSULA NONA</span>
+        Como garantia do cumprimento das obrigações pactuadas a caução no valor de 2 aluguéis no valor de <span class="highlight">${formatCurrency(caucao)}</span>, será a forma de seguro podendo ultrapassar esse valor caso esse valor não cubra as despesas no final do contrato, feitas pelo locatário, qualificados no preâmbulo deste instrumento, responsabilizando-se, como principais pagadores, pelo fiel cumprimento de todas as cláusulas ora reciprocamente estipuladas e aceitas, inclusive indenização de danos no imóvel e reparos necessários, além dos ônus judiciais respectivos.
+        <br/>
+        § 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.
+        <br/>
+        § 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
+
+        <p><span class="clause-title">CLÁUSULA DÉCIMA</span>
+        É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
+
+        <p><span class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA</span>
+        Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
+
+        <p><span class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</span>
+        O foro deste contrato, é o da Comarca de <span class="highlight">BARUERI-SP</span>.</p>
+
+        <p><span class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</span>
+        O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.
+        <br/>
+        Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
+
+        <p>E por estarem justos e contratados, lavraram o presente instrumento em via única.</p>
+        
+        <p style="text-align: right;">Barueri, ${fullDate}.</p>
+
         <div class="signature-box">
-          <div class="signature-line">ASSINATURA LOCADOR</div>
-          <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${clientName})</div>
+          <div class="signature-line">ASSINATURA LOCADOR<br/>(${locatorName})</div>
+          <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${tenantName})</div>
         </div>
       </body>
       </html>
     `;
 
-    const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+    const blob = new Blob(['\\ufeff', content], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Contrato_${clientName.replace(/\s+/g, '_')}.doc`;
+    link.download = `Contrato_${tenantName.replace(/\\s+/g, '_')}.doc`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -285,8 +456,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         {isAddingClient ? (
           <ClientForm
             properties={properties}
-            onCancel={() => setIsAddingClient(false)}
-            onSuccess={() => { setIsAddingClient(false); fetchClients(); }}
+            editingClient={editingClient}
+            onCancel={() => { setIsAddingClient(false); setEditingClient(null); }}
+            onSuccess={() => { setIsAddingClient(false); setEditingClient(null); fetchClients(); }}
           />
         ) : isAddingProperty ? (
           <PropertyForm
@@ -316,7 +488,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
               )}
 
               {currentTab === 'clients' && (
-                <button onClick={() => setIsAddingClient(true)} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
+                <button onClick={() => { setEditingClient(null); setIsAddingClient(true); }} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                   Novo Cliente
                 </button>
@@ -373,7 +545,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             {currentTab === 'clients' && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
                 <table className="w-full text-left min-w-[600px]">
-                  <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cliente</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contato</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Interesse</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contrato</th></tr></thead>
+                  <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cliente</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contato</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Interesse</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contrato</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ações</th></tr></thead>
                   <tbody className="divide-y divide-gray-50">
                     {clients.length > 0 ? clients.map(client => (
                       <tr key={client.id} className="hover:bg-gray-50">
@@ -381,7 +553,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                         <td className="p-4 text-sm text-gray-500">{client.phone}<br />{client.email}</td>
                         <td className="p-4 text-sm text-gray-500">{client.property_interest || '-'}</td>
                         <td className="p-4"><span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-[10px] font-bold uppercase tracking-wide">{client.status}</span></td>
-                        <td className="p-4"><button onClick={() => generateContractDoc(client.name, client.cpf, client.property_interest)} className="text-[10px] font-bold uppercase tracking-widest text-[#4A5D23] hover:underline">Gerar DOC</button></td>
+                        <td className="p-4"><button onClick={() => generateContractDoc(client)} className="text-[10px] font-bold uppercase tracking-widest text-[#4A5D23] hover:underline">Gerar DOC</button></td>
+                        <td className="p-4 text-sm flex gap-3">
+                          <button
+                            onClick={() => handleEditClient(client)}
+                            className="text-gray-400 hover:text-[#4A5D23] transition-colors"
+                            title="Editar"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClient(Number(client.id))}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                            title="Excluir"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </td>
                       </tr>
                     )) : (
                       <tr><td colSpan={5} className="p-8 text-center text-gray-400">Nenhum cliente cadastrado.</td></tr>
