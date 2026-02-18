@@ -250,9 +250,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações de Vigência</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td width="30%">Data Inicial</td>
-            <td width="40%" colspan="2">Data Final</td>
-            <td width="30%">Total em Meses</td>
+            <td width="10%">Data Inicial</td>
+            <td width="10%" colspan="2">Data Final</td>
+            <td width="10%">Total em Meses</td>
           </tr>
           <tr>
             <td style="text-align: center;">${startDate}</td>
