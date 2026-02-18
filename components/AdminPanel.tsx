@@ -197,11 +197,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <style>
           body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.2; text-align: justify; margin: 20px; }
           h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 10px; }
-          .main-title { letter-spacing: 5px; font-size: 16pt; margin-bottom: 25px; }
+          .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 25px; }
           .highlight { font-weight: bold; }
           .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 10pt; }
           .summary-table td { border: 1px solid black; padding: 2px 5px; vertical-align: middle; }
-          .summary-header { background-color: #f3f4f6; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
+          .summary-header { background-color: #e5e7eb; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
           .clause-title { font-weight: bold; margin-top: 15px; display: block; text-align: center; text-transform: uppercase; }
           .signature-box { margin-top: 50px; text-align: center; }
           .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; margin-top: 40px; padding-top: 5px; }
@@ -217,18 +217,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informação das Partes</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td colspan="2">Nome / Razão Social</td>
-            <td width="25%">CPF / CNPJ</td>
-            <td width="20%">Qualificação</td>
+            <td width="60%">Nome / Razão Social</td>
+            <td colspan="2">CPF / CNPJ</td>
+            <td width="15%">Qualificação</td>
           </tr>
           <tr>
-            <td colspan="2">${locatorName}</td>
-            <td>${locatorCpf}</td>
+            <td>${locatorName}</td>
+            <td colspan="2">${locatorCpf}</td>
             <td>Locador</td>
           </tr>
           <tr>
-            <td colspan="2">${tenantName}</td>
-            <td>${tenantCpf}</td>
+            <td>${tenantName}</td>
+            <td colspan="2">${tenantCpf}</td>
             <td>Locatário</td>
           </tr>
 
@@ -250,9 +250,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações de Vigência</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td>Data Inicial</td>
-            <td colspan="2">Data Final</td>
-            <td>Total em Meses</td>
+            <td width="30%">Data Inicial</td>
+            <td width="40%" colspan="2">Data Final</td>
+            <td width="30%">Total em Meses</td>
           </tr>
           <tr>
             <td style="text-align: center;">${startDate}</td>
@@ -264,35 +264,42 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações de Valores e Vencimentos</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td colspan="2">Descrição</td>
-            <td>Valor</td>
-            <td>Fatura Vencimento</td>
+            <td width="30%">Descrição</td>
+            <td width="20%">&nbsp;</td>
+            <td width="20%">Valor</td>
+            <td width="30%">Fatura Vencimento</td>
           </tr>
           <tr>
-            <td colspan="2">Aluguel</td>
+            <td>Aluguel</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(rent)}</td>
             <td rowspan="6" style="text-align: center; vertical-align: middle;">
               ${dueDay} de cada mês
             </td>
           </tr>
           <tr>
-            <td colspan="2">Condomínio</td>
+            <td>Condomínio</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(condo)}</td>
           </tr>
           <tr>
-            <td colspan="2">Seguro Incêndio</td>
+            <td>Seguro Incêndio</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(fire)}</td>
           </tr>
           <tr>
-            <td colspan="2">IPTU</td>
+            <td>IPTU</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(iptu)}</td>
           </tr>
           <tr>
-            <td colspan="2">Taxa de Serviços</td>
+            <td>Taxa de Serviços</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(service)}</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td colspan="2">Total geral</td>
+            <td>Total geral</td>
+            <td>&nbsp;</td>
             <td style="text-align: right;">${formatCurrency(totalValue)}</td>
           </tr>
         </table>
