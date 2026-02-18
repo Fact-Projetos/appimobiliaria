@@ -7,9 +7,11 @@ interface HeaderProps {
   onNav: (path: string) => void;
   activeTab: string;
   companySettings: CompanySettings | null;
+  session: any;
+  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onNav, activeTab, companySettings }) => {
+const Header: React.FC<HeaderProps> = ({ onNav, activeTab, companySettings, session, onLogout }) => {
   const address = companySettings?.address
     ? `${companySettings.address}${companySettings.number ? `, ${companySettings.number}` : ''} - ${companySettings.state || 'SP'}`
     : 'Av. Brigadeiro Faria Lima, 2500 - SP';
@@ -78,12 +80,20 @@ const Header: React.FC<HeaderProps> = ({ onNav, activeTab, companySettings }) =>
             </button>
           </nav>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            {session && (
+              <button
+                onClick={onLogout}
+                className="text-red-500 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest px-2"
+              >
+                Sair
+              </button>
+            )}
             <button
               onClick={() => onNav('admin')}
               className="bg-black text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-[#4A5D23] transition-all duration-300 shadow-sm"
             >
-              Acesso Admin
+              {session ? 'Painel Admin' : 'Acesso Admin'}
             </button>
           </div>
         </div>

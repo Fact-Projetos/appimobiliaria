@@ -424,7 +424,13 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfcfc]">
-      <Header onNav={handleNav} activeTab={activeTab} companySettings={companySettings} />
+      <Header
+        onNav={handleNav}
+        activeTab={activeTab}
+        companySettings={companySettings}
+        session={session}
+        onLogout={handleLogout}
+      />
 
       <main className="flex-grow">
         {renderContent()}
