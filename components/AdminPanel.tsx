@@ -166,7 +166,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     const tenantCpf = client.cpf || '';
 
     const propType = property?.type || 'Imóvel';
-    const propAddress = property ? `${property.street}, ${property.number}${property.complement ? `, ${property.complement}` : ''} - ${property.neighborhood}, ${property.city}/${property.state}` : client.property_interest;
+    const propAddress = property
+      ? `${property.street || ''}, ${property.number || ''}${property.complement ? `, ${property.complement}` : ''} - ${property.neighborhood || ''}, ${property.city || ''}/${property.state || ''}`
+      : (client.property_interest || '-');
 
     const startDate = client.contract_start_date ? new Date(client.contract_start_date).toLocaleDateString('pt-BR') : '-';
     const endDate = client.contract_end_date ? new Date(client.contract_end_date).toLocaleDateString('pt-BR') : '-';
@@ -193,30 +195,31 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <meta charset='utf-8'>
         <title>Contrato de Locação</title>
         <style>
-          body { font-family: 'Arial', sans-serif; font-size: 11pt; line-height: 1.5; text-align: justify; margin: 20px; }
-          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
+          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.2; text-align: justify; margin: 20px; }
+          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 10px; }
+          .main-title { letter-spacing: 5px; font-size: 16pt; margin-bottom: 25px; }
           .highlight { font-weight: bold; }
-          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 10pt; }
-          .summary-table th, .summary-table td { border: 1px solid black; padding: 6px; }
-          .summary-header { background-color: #f3f4f6; font-weight: bold; text-align: center; text-transform: uppercase; }
+          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 10pt; }
+          .summary-table td { border: 1px solid black; padding: 2px 5px; vertical-align: middle; }
+          .summary-header { background-color: #f3f4f6; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
           .clause-title { font-weight: bold; margin-top: 15px; display: block; text-align: center; text-transform: uppercase; }
           .signature-box { margin-top: 50px; text-align: center; }
           .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; margin-top: 40px; padding-top: 5px; }
         </style>
       </head>
       <body>
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h2 style="font-size: 16pt;">QUADRO DEMONSTRATIVO</h2>
+        <div style="text-align: center; margin-bottom: 10px;">
+          <h2 class="main-title">QUADRO DEMONSTRATIVO</h2>
         </div>
 
         <table class="summary-table">
           <tr class="summary-header">
             <td colspan="4">Informação das Partes</td>
           </tr>
-          <tr>
-            <td colspan="2"><span class="highlight">Nome / Razão Social</span></td>
-            <td><span class="highlight">CPF / CNPJ</span></td>
-            <td><span class="highlight">Qualificação</span></td>
+          <tr style="font-weight: bold;">
+            <td colspan="2">Nome / Razão Social</td>
+            <td width="25%">CPF / CNPJ</td>
+            <td width="20%">Qualificação</td>
           </tr>
           <tr>
             <td colspan="2">${locatorName}</td>
@@ -232,10 +235,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <tr class="summary-header">
             <td colspan="4">Informações do Imóvel</td>
           </tr>
-          <tr>
-            <td><span class="highlight">Tipo do Imóvel</span></td>
-            <td colspan="2"><span class="highlight">Endereço do Imóvel</span></td>
-            <td><span class="highlight">Finalidade</span></td>
+          <tr style="font-weight: bold;">
+            <td width="20%">Tipo do Imóvel</td>
+            <td colspan="2">Endereço do Imóvel</td>
+            <td width="20%">Finalidade</td>
           </tr>
           <tr>
             <td style="text-align: center;">${propType}</td>
@@ -246,10 +249,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <tr class="summary-header">
             <td colspan="4">Informações de Vigência</td>
           </tr>
-          <tr>
-            <td><span class="highlight">Data Inicial</span></td>
-            <td colspan="2"><span class="highlight">Data Final</span></td>
-            <td><span class="highlight">Total em Meses</span></td>
+          <tr style="font-weight: bold;">
+            <td>Data Inicial</td>
+            <td colspan="2">Data Final</td>
+            <td>Total em Meses</td>
           </tr>
           <tr>
             <td style="text-align: center;">${startDate}</td>
@@ -260,10 +263,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <tr class="summary-header">
             <td colspan="4">Informações de Valores e Vencimentos</td>
           </tr>
-          <tr>
-            <td colspan="2"><span class="highlight">Descrição</span></td>
-            <td><span class="highlight">Valor</span></td>
-            <td><span class="highlight">Fatura Vencimento</span></td>
+          <tr style="font-weight: bold;">
+            <td colspan="2">Descrição</td>
+            <td>Valor</td>
+            <td>Fatura Vencimento</td>
           </tr>
           <tr>
             <td colspan="2">Aluguel</td>
