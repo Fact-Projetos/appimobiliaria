@@ -28,7 +28,7 @@ const menuItems = [
     )
   },
   {
-    id: 'clients', label: 'Cadastro de Clientes', icon: (
+    id: 'clients', label: 'Contratos', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
     )
   },
@@ -209,7 +209,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <div className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl p-6 flex flex-col animate-slide-in">
             <div className="flex justify-between items-center mb-8">
               <div className="font-bold text-lg">Menu</div>
-              <button 
+              <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="Fechar menu"
@@ -217,17 +217,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                 <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            
+
             <nav className="space-y-2 flex-1">
               {menuItems.map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => { 
-                    setCurrentTab(item.id as AdminTab); 
-                    setIsAddingProperty(false); 
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentTab(item.id as AdminTab);
+                    setIsAddingProperty(false);
                     setIsAddingClient(false);
                     setIsMobileMenuOpen(false);
-                  }} 
+                  }}
                   className={`w-full flex items-center px-4 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${currentTab === item.id ? 'bg-[#4A5D23] text-white shadow-lg shadow-[#4A5D23]/20' : 'text-gray-400 hover:bg-gray-50 hover:text-black'}`}
                 >
                   <span className={`mr-3 ${currentTab === item.id ? 'text-white' : 'text-gray-400'}`}>{item.icon}</span>
@@ -268,7 +268,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         {/* Mobile Header */}
         <div className="lg:hidden flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-0 z-20">
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 -ml-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
               aria-label="Abrir menu"
@@ -278,7 +278,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <div className="font-bold text-gray-800">Nascimento Admin</div>
           </div>
           <div className="w-8 h-8 bg-[#4A5D23] rounded-lg flex items-center justify-center text-white">
-             <span className="font-bold text-xs">NA</span>
+            <span className="font-bold text-xs">NA</span>
           </div>
         </div>
 
@@ -334,11 +334,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             {currentTab === 'properties' && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
                 <table className="w-full text-left min-w-[600px]">
-                  <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imóvel</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Valor</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ações</th></tr></thead>
+                  <thead className="bg-gray-50 border-b border-gray-100"><tr><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imóvel</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Proprietário</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipo</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Valor</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th><th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ações</th></tr></thead>
                   <tbody className="divide-y divide-gray-50">
                     {properties.length > 0 ? properties.map(p => (
                       <tr key={p.id} className="hover:bg-gray-50">
                         <td className="p-4 text-sm font-medium">{p.title}</td>
+                        <td className="p-4 text-sm text-gray-500">
+                          {p.ownerName ? p.ownerName.split(' ')[0] : '-'}<br />
+                          <span className="text-[10px] font-normal text-gray-400">{p.ownerPhone || '-'}</span>
+                        </td>
                         <td className="p-4 text-sm text-gray-500">{p.operation}</td>
                         <td className="p-4 text-sm font-bold text-[#4A5D23]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(p.price)}</td>
                         <td className="p-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase tracking-wide">Ativo</span></td>

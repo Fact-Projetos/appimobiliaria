@@ -88,7 +88,10 @@ const App: React.FC = () => {
           area: Number(item.area || 0),
           imageUrl: item.image_url || 'https://via.placeholder.com/800x600?text=Sem+Imagem',
           galleryUrls: item.gallery_urls || '',
-          inspectionUrls: item.inspection_urls || ''
+          inspectionUrls: item.inspection_urls || '',
+          ownerName: item.owner_name || '',
+          ownerCpf: item.owner_cpf || '',
+          ownerPhone: item.owner_phone || ''
         }));
         setProperties(mappedProperties);
       }

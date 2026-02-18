@@ -34,7 +34,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
         parkingSpaces: '',
         area: '',
         pets: false,
-        furnished: false
+        furnished: false,
+        ownerName: '',
+        ownerCpf: '',
+        ownerPhone: ''
     });
 
     // File states for uploads
@@ -92,7 +95,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 parkingSpaces: editingProperty.parkingSpaces?.toString() || '0',
                 area: editingProperty.area.toString(),
                 pets: editingProperty.pets || false,
-                furnished: editingProperty.furnished || false
+                furnished: editingProperty.furnished || false,
+                ownerName: editingProperty.ownerName || '',
+                ownerCpf: editingProperty.ownerCpf || '',
+                ownerPhone: editingProperty.ownerPhone || ''
             });
         }
     }, [editingProperty]);
@@ -200,7 +206,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 furnished: formData.furnished,
                 image_url: coverUrl,
                 gallery_urls: galleryUrlString,
-                inspection_urls: inspectionUrlString
+                inspection_urls: inspectionUrlString,
+                owner_name: formData.ownerName,
+                owner_cpf: formData.ownerCpf,
+                owner_phone: formData.ownerPhone
             };
 
             let error;
@@ -395,6 +404,29 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                             <div>
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Total (R$)</label>
                                 <input type="text" readOnly value={total} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-800 font-bold outline-none cursor-not-allowed text-xs" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dados do Proprietário Section */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-[#4A5D23] px-6 py-2">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white">Dados do Proprietário</h4>
+                    </div>
+                    <div className="p-5">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Nome Completo</label>
+                                <input type="text" name="ownerName" value={formData.ownerName} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Nome do Proprietário" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CPF</label>
+                                <input type="text" name="ownerCpf" value={formData.ownerCpf} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="000.000.000-00" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Telefone</label>
+                                <input type="text" name="ownerPhone" value={formData.ownerPhone} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="(00) 00000-0000" />
                             </div>
                         </div>
                     </div>

@@ -29,6 +29,9 @@ export interface Property {
   imageUrl: string;
   galleryUrls?: string;
   inspectionUrls?: string;
+  ownerName?: string;
+  ownerCpf?: string;
+  ownerPhone?: string;
 }
 
 export interface Client {
