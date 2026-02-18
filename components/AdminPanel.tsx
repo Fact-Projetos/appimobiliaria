@@ -195,12 +195,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <meta charset='utf-8'>
         <title>Contrato de Locação</title>
         <style>
-          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.1; text-align: justify; margin: 20px; }
-          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 8px; }
-          .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 20px; }
+          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.0; text-align: justify; margin: 20px; }
+          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 5px; }
+          .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 15px; }
           .highlight { font-weight: bold; }
-          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; }
-          .summary-table td { border: 1px solid black; padding: 1px 5px; vertical-align: middle; }
+          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10pt; }
+          .summary-table td { border: 1px solid black; padding: 0 4px; vertical-align: middle; }
           .summary-header { background-color: #e5e7eb; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
           .clause-title { font-weight: bold; margin-top: 12px; display: block; text-align: center; text-transform: uppercase; }
           .signature-box { margin-top: 40px; text-align: center; }
@@ -236,14 +236,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações do Imóvel</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td width="20%">Tipo do Imóvel</td>
+            <td width="15%">Tipo do Imóvel</td>
             <td colspan="2">Endereço do Imóvel</td>
-            <td width="20%">Finalidade</td>
+            <td width="15%">Finalidade</td>
           </tr>
           <tr>
-            <td style="text-align: center;">${propType}</td>
+            <td>${propType}</td>
             <td colspan="2">${propAddress}</td>
-            <td style="text-align: center;">Residencial</td>
+            <td>Residencial</td>
           </tr>
 
           <tr class="summary-header">
@@ -302,63 +302,80 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p><span class="clause-title">CLÁUSULA PRIMEIRA</span>
         <p>
         A locação vigerá pelo período estabelecido no preâmbulo deste instrumento, devendo o LOCATÁRIO restituí-lo, findo o prazo, independente de notificação judicial ou extrajudicial.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA SEGUNDA</span>
         <p>
         O valor mensal da locação será aquele pactuado no preâmbulo deste instrumento, e os aluguéis serão reajustados na periodicidade também retro mencionada, ou no menor período que a legislação vier a permitir, com base no índice IPCA\\IBGE.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA TERCEIRA</span>
         <p>      
         O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária na conta <span class="highlight">POUPANÇA:1039808-8, AGÊNCIA 0354 BANCO BRADESCO</span>, ou outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.
         <br/>
+        <p> 
         Parágrafo único: A eventual tolerância em qualquer atraso ou demora no pagamento de aluguéis, impostos, taxas, seguro, ou demais encargos de responsabilidade do LOCATÁRIO, em hipótese alguma poderá ser considerada como modificação das condições do contrato, que permanecerão em vigor para todos os efeitos.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA QUARTA</span>
         <p>
         Além do aluguel são encargos do LOCATÁRIO o imposto predial (IPTU), o seguro de incêndio, a taxa de luz, força, saneamento, esgoto, condomínio e quaisquer outras que recaiam ou venham a recair sobre o imóvel locado, que serão pagas às repartições arrecadadoras respectivas. Incumbe ao LOCATÁRIO, também, satisfazer por sua conta as exigências das autoridades sanitárias de higiene, ou do condomínio.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA QUINTA</span>
         <p>
         O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA SEXTA</span>
         <p>
         O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitantes, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.
         <br/>
+        <p> 
         Parágrafo único: O LOCADOR, por si ou por preposto, poderá visitar o imóvel, durante a locação, para verificar o exato cumprimento das cláusulas deste contrato.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA SÉTIMA</span>
         <p>
         A infração de qualquer das cláusulas deste contrato faz incorrer o infrator na multa irredutível no valor da caução de <span class="highlight">${formatCurrency(caucao)}</span> ou parcial, sobre o aluguel anual em vigor à época da infração, e importa na sua rescisão de pleno direito, independentemente de qualquer notificação ou aviso, sujeitando-se a parte inadimplente ao pagamento das perdas e danos que forem apuradas.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA OITAVA</span>
         <p>
         Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA NONA</span>
         <p>
         Como garantia do cumprimento das obrigações pactuadas a caução no valor de 2 aluguéis no valor de <span class="highlight">${formatCurrency(caucao)}</span>, será a forma de seguro podendo ultrapassar esse valor caso esse valor não cubra as despesas no final do contrato, feitas pelo locatário, qualificados no preâmbulo deste instrumento, responsabilizando-se, como principais pagadores, pelo fiel cumprimento de todas as cláusulas ora reciprocamente estipuladas e aceitas, inclusive indenização de danos no imóvel e reparos necessários, além dos ônus judiciais respectivos.
         <br/>
-        § 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.
+        <p> 
+        Parágrafo 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.
         <br/>
-        § 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
+        <p> 
+        Parágrafo 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA</span>
         <p>
         É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA</span>
         <p>
         Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</span>
         <p>
         O foro deste contrato, é o da Comarca de <span class="highlight">BARUERI-SP</span>.</p>
+        <p> 
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</span>
         <p>
         O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.
         <br/>
+        <p> 
         Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
 
         <p>E por estarem justos e contratados, lavraram o presente instrumento em via única.</p>
