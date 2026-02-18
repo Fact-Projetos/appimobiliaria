@@ -304,19 +304,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         A locação vigerá pelo período estabelecido no preâmbulo deste instrumento, devendo o LOCATÁRIO restituí-lo, findo o prazo, independente de notificação judicial ou extrajudicial.</p>
 
         <p><span class="clause-title">CLÁUSULA SEGUNDA</span>
+        <p>
         O valor mensal da locação será aquele pactuado no preâmbulo deste instrumento, e os aluguéis serão reajustados na periodicidade também retro mencionada, ou no menor período que a legislação vier a permitir, com base no índice IPCA\\IBGE.</p>
 
         <p><span class="clause-title">CLÁUSULA TERCEIRA</span>
-
+        <p>      
         O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária na conta <span class="highlight">POUPANÇA:1039808-8, AGÊNCIA 0354 BANCO BRADESCO</span>, ou outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.
         <br/>
         Parágrafo único: A eventual tolerância em qualquer atraso ou demora no pagamento de aluguéis, impostos, taxas, seguro, ou demais encargos de responsabilidade do LOCATÁRIO, em hipótese alguma poderá ser considerada como modificação das condições do contrato, que permanecerão em vigor para todos os efeitos.</p>
 
         <p><span class="clause-title">CLÁUSULA QUARTA</span>
-
+        <p>
         Além do aluguel são encargos do LOCATÁRIO o imposto predial (IPTU), o seguro de incêndio, a taxa de luz, força, saneamento, esgoto, condomínio e quaisquer outras que recaiam ou venham a recair sobre o imóvel locado, que serão pagas às repartições arrecadadoras respectivas. Incumbe ao LOCATÁRIO, também, satisfazer por sua conta as exigências das autoridades sanitárias de higiene, ou do condomínio.</p>
 
         <p><span class="clause-title">CLÁUSULA QUINTA</span>
+        <p>
         O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
 
         <p><span class="clause-title">CLÁUSULA SEXTA</span>
@@ -334,6 +336,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
 
         <p><span class="clause-title">CLÁUSULA NONA</span>
+        <p>
         Como garantia do cumprimento das obrigações pactuadas a caução no valor de 2 aluguéis no valor de <span class="highlight">${formatCurrency(caucao)}</span>, será a forma de seguro podendo ultrapassar esse valor caso esse valor não cubra as despesas no final do contrato, feitas pelo locatário, qualificados no preâmbulo deste instrumento, responsabilizando-se, como principais pagadores, pelo fiel cumprimento de todas as cláusulas ora reciprocamente estipuladas e aceitas, inclusive indenização de danos no imóvel e reparos necessários, além dos ônus judiciais respectivos.
         <br/>
         § 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.
@@ -341,27 +344,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         § 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA</span>
+        <p>
         É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA</span>
+        <p>
         Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</span>
-
+        <p>
         O foro deste contrato, é o da Comarca de <span class="highlight">BARUERI-SP</span>.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</span>
-
+        <p>
         O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.
         <br/>
         Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
 
         <p>E por estarem justos e contratados, lavraram o presente instrumento em via única.</p>
         
-        <p style="text-align: right;">Barueri, ${fullDate}.</p>
+        <p style="text-align: left;">Barueri, ${fullDate}.</p>
 
         <div class="signature-box">
           <div class="signature-line">ASSINATURA LOCADOR<br/>(${locatorName})</div>
+          <p>
+          <p>
+          <p>
           <p>
           <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${tenantName})</div>
         </div>
