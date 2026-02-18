@@ -300,31 +300,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p>O LOCADOR e o LOCATÁRIO, acima qualificados, resolvem ajustar a locação do imóvel retro descrito, que ora contratam, sob as cláusulas e condições seguintes:</p>
 
         <p><span class="clause-title">CLÁUSULA PRIMEIRA</span>
+        <p>
         A locação vigerá pelo período estabelecido no preâmbulo deste instrumento, devendo o LOCATÁRIO restituí-lo, findo o prazo, independente de notificação judicial ou extrajudicial.</p>
 
         <p><span class="clause-title">CLÁUSULA SEGUNDA</span>
         O valor mensal da locação será aquele pactuado no preâmbulo deste instrumento, e os aluguéis serão reajustados na periodicidade também retro mencionada, ou no menor período que a legislação vier a permitir, com base no índice IPCA\\IBGE.</p>
 
         <p><span class="clause-title">CLÁUSULA TERCEIRA</span>
+
         O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária na conta <span class="highlight">POUPANÇA:1039808-8, AGÊNCIA 0354 BANCO BRADESCO</span>, ou outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.
         <br/>
         Parágrafo único: A eventual tolerância em qualquer atraso ou demora no pagamento de aluguéis, impostos, taxas, seguro, ou demais encargos de responsabilidade do LOCATÁRIO, em hipótese alguma poderá ser considerada como modificação das condições do contrato, que permanecerão em vigor para todos os efeitos.</p>
 
         <p><span class="clause-title">CLÁUSULA QUARTA</span>
+
         Além do aluguel são encargos do LOCATÁRIO o imposto predial (IPTU), o seguro de incêndio, a taxa de luz, força, saneamento, esgoto, condomínio e quaisquer outras que recaiam ou venham a recair sobre o imóvel locado, que serão pagas às repartições arrecadadoras respectivas. Incumbe ao LOCATÁRIO, também, satisfazer por sua conta as exigências das autoridades sanitárias de higiene, ou do condomínio.</p>
 
         <p><span class="clause-title">CLÁUSULA QUINTA</span>
         O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
 
         <p><span class="clause-title">CLÁUSULA SEXTA</span>
+        <p>
         O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitantes, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.
         <br/>
         Parágrafo único: O LOCADOR, por si ou por preposto, poderá visitar o imóvel, durante a locação, para verificar o exato cumprimento das cláusulas deste contrato.</p>
 
         <p><span class="clause-title">CLÁUSULA SÉTIMA</span>
+        <p>
         A infração de qualquer das cláusulas deste contrato faz incorrer o infrator na multa irredutível no valor da caução de <span class="highlight">${formatCurrency(caucao)}</span> ou parcial, sobre o aluguel anual em vigor à época da infração, e importa na sua rescisão de pleno direito, independentemente de qualquer notificação ou aviso, sujeitando-se a parte inadimplente ao pagamento das perdas e danos que forem apuradas.</p>
 
         <p><span class="clause-title">CLÁUSULA OITAVA</span>
+        <p>
         Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
 
         <p><span class="clause-title">CLÁUSULA NONA</span>
@@ -341,9 +347,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</span>
+
         O foro deste contrato, é o da Comarca de <span class="highlight">BARUERI-SP</span>.</p>
 
         <p><span class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</span>
+
         O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.
         <br/>
         Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
@@ -354,6 +362,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
 
         <div class="signature-box">
           <div class="signature-line">ASSINATURA LOCADOR<br/>(${locatorName})</div>
+          <p>
           <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${tenantName})</div>
         </div>
       </body>
