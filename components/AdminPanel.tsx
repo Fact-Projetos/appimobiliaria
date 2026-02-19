@@ -351,10 +351,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         
         <p style="text-align: left;">Barueri, ${fullDate}.</p>
 
-        <div class="signature-box">
-          <div class="signature-line">ASSINATURA LOCADOR<br/>(${locatorName})</div>
-          <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${tenantName})</div>
-        </div>
+        <table class="summary-table" style="margin-top: 50px;">
+          <tr class="summary-header">
+            <td width="60%" style="text-align: left;">Nome das Partes</td>
+            <td width="40%" style="text-align: left;">Assinaturas</td>
+          </tr>
+          <tr style="height: 60px;">
+            <td style="vertical-align: middle;">${locatorName}</td>
+            <td></td>
+          </tr>
+          <tr style="height: 60px;">
+            <td style="vertical-align: middle;">${tenantName}</td>
+            <td></td>
+          </tr>
+        </table>
       </body>
       </html>
     `;
