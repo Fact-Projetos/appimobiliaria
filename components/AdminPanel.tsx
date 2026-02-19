@@ -526,10 +526,88 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             </header>
 
             {currentTab === 'overview' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm"><h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Imóveis Ativos</h3><p className="text-4xl font-light text-black">{properties.length}</p></div>
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm"><h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Propostas Pendentes</h3><p className="text-4xl font-light text-black">{clients.filter(c => c.status === 'Em análise').length}</p></div>
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm"><h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Leads do Site</h3><p className="text-4xl font-light text-black">{contactsList.length}</p></div>
+              <div className="space-y-10">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Imóveis Ativos</h3>
+                    <p className="text-4xl font-light text-black font-serif">{properties.length}</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Contratos Ativos</h3>
+                    <p className="text-4xl font-light text-black font-serif">{clients.filter(c => c.status === 'Ativo').length}</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Leads do Site</h3>
+                    <p className="text-4xl font-light text-[#4A5D23] font-serif">{contactsList.length}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                  {/* Latest Contacts List */}
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xs font-bold text-black uppercase tracking-[0.2em]">Últimos Contatos do Site</h3>
+                      <button onClick={() => setCurrentTab('contacts')} className="text-[10px] font-bold text-[#4A5D23] uppercase hover:underline">Ver todos</button>
+                    </div>
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50 overflow-hidden">
+                      {contactsList.length > 0 ? contactsList.slice(0, 3).map(contact => (
+                        <div key={contact.id} className="p-4 hover:bg-gray-50 transition-colors flex justify-between items-center">
+                          <div>
+                            <p className="text-sm font-medium text-black">{contact.name}</p>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-tight">{contact.property_title || 'Interesse Geral'}</p>
+                          </div>
+                          <span className="text-[10px] font-bold text-[#4A5D23] bg-green-50 px-2 py-1 rounded uppercase tracking-tighter">Novo</span>
+                        </div>
+                      )) : (
+                        <div className="p-10 text-center">
+                          <p className="text-sm text-gray-400">Nenhum contato recente.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Insurance Partners */}
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-bold text-black uppercase tracking-[0.2em]">Seguradoras e Fiança</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center group hover:border-[#4A5D23] transition-colors cursor-pointer">
+                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3 text-blue-600 font-bold group-hover:bg-blue-600 group-hover:text-white transition-colors">P</div>
+                        <p className="text-xs font-bold text-gray-800">Porto Seguro</p>
+                        <p className="text-[9px] text-gray-400 uppercase tracking-tighter mt-1">Fiança Tradicional</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center group hover:border-[#4A5D23] transition-colors cursor-pointer">
+                        <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center mb-3 text-orange-600 font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">C</div>
+                        <p className="text-xs font-bold text-gray-800">CredPago</p>
+                        <p className="text-[9px] text-gray-400 uppercase tracking-tighter mt-1">Cartão de Crédito</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Management Tips Section */}
+                <div className="space-y-6">
+                  <h3 className="text-xs font-bold text-black uppercase tracking-[0.2em]">Central de Gestão Imobiliária</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="bg-black text-white p-6 rounded-2xl shadow-xl relative overflow-hidden group border border-black hover:bg-white hover:text-black transition-all duration-500">
+                      <div className="relative z-10">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#4A5D23] mb-2 block">Dica de Gestão</span>
+                        <h4 className="text-base font-bold mb-3">Vistoria de Entrada</h4>
+                        <p className="text-xs text-gray-400 group-hover:text-gray-600 leading-relaxed">Sempre anexe no mínimo 50 fotos e detalhe o estado das pinturas e rejuntes para evitar conflitos na saída.</p>
+                      </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-[#4A5D23] transition-colors">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-2 block">Jurídico</span>
+                      <h4 className="text-base font-bold text-black mb-3">Análise de Crédito</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">Exija que o comprometimento de renda não ultrapasse 30% do rendimento líquido mensal do inquilino.</p>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-[#4A5D23] transition-colors">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-orange-500 mb-2 block">Finanças</span>
+                      <h4 className="text-base font-bold text-black mb-3">Reajuste de Aluguel</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">Utilize preferencialmente o IPCA. Notifique o cliente com 30 dias de antecedência para evitar surpresas.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
