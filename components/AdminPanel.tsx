@@ -195,12 +195,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <meta charset='utf-8'>
         <title>Contrato de Locação</title>
         <style>
-          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 0.9; text-align: justify; margin: 20px; }
-          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 2px; }
-          .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 10px; }
+          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.2; text-align: justify; margin: 20px; }
+          h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 5px; }
+          .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 15px; }
           .highlight { font-weight: bold; }
-          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 10pt; }
-          .summary-table td { border: 1px solid black; padding: 0 4px; vertical-align: middle; }
+          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10pt; }
+          .summary-table td { border: 1px solid black; padding: 3px 5px; vertical-align: middle; }
           .summary-header { background-color: #e5e7eb; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
           .clause-title { font-weight: bold; margin-top: 12px; display: block; text-align: center; text-transform: uppercase; }
           .signature-box { margin-top: 40px; text-align: center; }
@@ -217,8 +217,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informação das Partes</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td width="60%">Nome / Razão Social</td>
-            <td colspan="2">CPF / CNPJ</td>
+            <td width="55%">Nome / Razão Social</td>
+            <td width="30%" colspan="2">CPF / CNPJ</td>
             <td width="15%">Qualificação</td>
           </tr>
           <tr>
@@ -236,8 +236,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações do Imóvel</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td width="15%">Tipo do Imóvel</td>
-            <td colspan="2">Endereço do Imóvel</td>
+            <td width="20%">Tipo do Imóvel</td>
+            <td width="55%" colspan="2">Endereço do Imóvel</td>
             <td width="25%">Finalidade</td>
           </tr>
           <tr>
@@ -250,9 +250,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td colspan="4">Informações de Vigência</td>
           </tr>
           <tr style="font-weight: bold;">
-            <td width="15%">Data Inicial</td>
-            <td width="15%" colspan="2">Data Final</td>
-            <td width="15%">Total em Meses</td>
+            <td width="30%">Data Inicial</td>
+            <td width="40%" colspan="2">Data Final</td>
+            <td width="30%">Total em Meses</td>
           </tr>
           <tr>
             <td style="text-align: center;">${startDate}</td>
