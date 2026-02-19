@@ -199,8 +199,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           h1, h2, h3 { text-align: center; font-size: 14pt; font-weight: normal; text-transform: uppercase; margin-bottom: 8px; }
           .main-title { letter-spacing: 8px; font-size: 16pt; margin-bottom: 20px; text-align: center; }
           .highlight { font-weight: bold; }
-          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10pt; }
-          .summary-table td { border: 1px solid black; padding: 1px 5px; vertical-align: middle; }
+          .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 0px; font-size: 10pt; }
+          .summary-table td { border: 1px solid black; padding: 2px 5px; vertical-align: middle; }
           .summary-header { background-color: #e5e7eb; font-weight: bold; text-align: center; font-size: 11pt; text-transform: uppercase; }
           .clause-title { font-weight: bold; margin-top: 14px; margin-bottom: 8px; text-align: center; text-transform: uppercase; display: block; width: 100%; }
           .clause-text { text-align: justify; margin-bottom: 10px; }
@@ -216,65 +216,55 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         </div>
 
         <table class="summary-table">
-          <tr class="summary-header">
-            <td colspan="4">Informação das Partes</td>
-          </tr>
+          <tr class="summary-header"><td colspan="3">Informação das Partes</td></tr>
           <tr style="font-weight: bold;">
-            <td width="60%">Nome / Razão Social</td>
-            <td colspan="2">CPF / CNPJ</td>
+            <td width="55%">Nome / Razão Social</td>
+            <td width="30%">CPF / CNPJ</td>
             <td width="15%">Qualificação</td>
           </tr>
-          <tr>
-            <td>${locatorName}</td>
-            <td colspan="2">${locatorCpf}</td>
-            <td>Locador</td>
-          </tr>
-          <tr>
-            <td>${tenantName}</td>
-            <td colspan="2">${tenantCpf}</td>
-            <td>Locatário</td>
-          </tr>
+          <tr><td>${locatorName}</td><td>${locatorCpf}</td><td style="text-align: center;">Locador</td></tr>
+          <tr><td>${tenantName}</td><td>${tenantCpf}</td><td style="text-align: center;">Locatário</td></tr>
+        </table>
 
-          <tr class="summary-header">
-            <td colspan="4">Informações do Imóvel</td>
-          </tr>
+        <table class="summary-table" style="border-top: none;">
+          <tr class="summary-header"><td colspan="3">Informações do Imóvel</td></tr>
           <tr style="font-weight: bold;">
             <td width="20%">Tipo do Imóvel</td>
-            <td colspan="2">Endereço do Imóvel</td>
+            <td width="60%">Endereço do Imóvel</td>
             <td width="20%">Finalidade</td>
           </tr>
           <tr>
             <td style="text-align: center;">${propType}</td>
-            <td colspan="2">${propAddress}</td>
+            <td>${propAddress}</td>
             <td style="text-align: center;">Residencial</td>
           </tr>
+        </table>
 
-          <tr class="summary-header">
-            <td colspan="4">Informações de Vigência</td>
+        <table class="summary-table" style="border-top: none;">
+          <tr class="summary-header"><td colspan="3">Informações de Vigência</td></tr>
+          <tr style="font-weight: bold; text-align: center;">
+            <td width="33%">Data Inicial</td>
+            <td width="33%">Data Final</td>
+            <td width="34%">Total em Meses</td>
           </tr>
-          <tr style="font-weight: bold;">
-            <td width="30%">Data Inicial</td>
-            <td width="40%" colspan="2">Data Final</td>
-            <td width="30%">Total em Meses</td>
+          <tr style="text-align: center;">
+            <td>${startDate}</td>
+            <td>${endDate}</td>
+            <td>${duration} meses</td>
           </tr>
-          <tr>
-            <td style="text-align: center;">${startDate}</td>
-            <td colspan="2" style="text-align: center;">${endDate}</td>
-            <td style="text-align: center;">${duration} meses</td>
-          </tr>
+        </table>
 
-          <tr class="summary-header">
-            <td colspan="4">Informações de Valores e Vencimentos</td>
-          </tr>
+        <table class="summary-table" style="border-top: none;">
+          <tr class="summary-header"><td colspan="3">Informações de Valores e Vencimentos</td></tr>
           <tr style="font-weight: bold;">
-            <td width="20%">Descrição</td>
-            <td width="20%">Valor</td>
-            <td width="60%" colspan="2">Fatura Vencimento</td>
+            <td width="40%">Descrição</td>
+            <td width="30%">Valor</td>
+            <td width="30%">Fatura Vencimento</td>
           </tr>
           <tr>
             <td>Aluguel</td>
             <td style="text-align: right;">${formatCurrency(rent)}</td>
-            <td colspan="2" rowspan="6" style="text-align: center; vertical-align: middle;">
+            <td rowspan="6" style="text-align: center; vertical-align: middle;">
               ${dueDay} de cada mês
             </td>
           </tr>
@@ -357,13 +347,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
 
         <div class="signature-box">
           <div class="signature-line">ASSINATURA LOCADOR<br/>(${locatorName})</div>
-          <p>
-          <p>
-          <p>
-          <p>
-          <p>
-          <p>
-          <p>
           <div class="signature-line">ASSINATURA LOCATÁRIO<br/>(${tenantName})</div>
         </div>
       </body>
