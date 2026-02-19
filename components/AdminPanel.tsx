@@ -155,7 +155,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     setIsAddingProperty(true);
   };
 
-  const generateContractDoc = (client: Client) => {
+  const getContractHTML = (client: Client) => {
     // Encontrar o imóvel relacionado para pegar valores de IPTU, condomínio, etc.
     const property = properties.find(p => p.title === client.property_interest);
 
@@ -189,7 +189,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     const today = new Date();
     const fullDate = `${today.getDate()} de ${today.toLocaleString('pt-BR', { month: 'long' })} de ${today.getFullYear()}`;
 
-    const content = `
+    return `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head>
         <meta charset='utf-8'>
@@ -208,6 +208,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           .title-separator { border-bottom: 1.5pt solid black; padding-bottom: 5px; margin-bottom: 15px; }
           .signature-box { margin-top: 40px; text-align: center; }
           .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; margin-top: 35px; padding-top: 5px; }
+          @media print {
+            body { margin: 0; padding: 1.5cm; }
+          }
         </style>
       </head>
       <body>
@@ -313,7 +316,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p class="clause-text">O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
 
         <div class="clause-title">CLÁUSULA SEXTA</div>
-        <p class="clause-text">O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitantes, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.</p>
+        <p class="clause-text">O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitors, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.</p>
         
         <p class="clause-text italic-paragraph">Parágrafo único: O LOCADOR, por si ou por preposto, poderá visitar o imóvel, durante a locação, para verificar o exato cumprimento das cláusulas deste contrato.</p>
 
@@ -355,16 +358,33 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
       </body>
       </html>
     `;
+  };
 
-
-    const blob = new Blob(['\\ufeff', content], { type: 'application/msword' });
+  const generateContractDoc = (client: Client) => {
+    const content = getContractHTML(client);
+    const tenantName = client.name || 'Contrato';
+    const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Contrato_${tenantName.replace(/\\s+/g, '_')}.doc`;
+    link.download = `Contrato_${tenantName.replace(/\s+/g, '_')}.doc`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const generateContractPDF = (client: Client) => {
+    const content = getContractHTML(client);
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(content);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
   };
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -553,7 +573,28 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                         <td className="p-4 text-sm text-gray-500">{client.phone}<br />{client.email}</td>
                         <td className="p-4 text-sm text-gray-500">{client.property_interest || '-'}</td>
                         <td className="p-4"><span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-[10px] font-bold uppercase tracking-wide">{client.status}</span></td>
-                        <td className="p-4"><button onClick={() => generateContractDoc(client)} className="text-[10px] font-bold uppercase tracking-widest text-[#4A5D23] hover:underline">Gerar DOC</button></td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => generateContractDoc(client)}
+                              className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors group"
+                              title="Baixar Word (.doc)"
+                            >
+                              <svg className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.11 11.23l-1.01 4.54h-.05l-1.01-4.54H8.72l1.64 6.78h1.49l1.01-4.54 1.01 4.54h1.49l1.64-6.78h-1.32l-1.01 4.54h-.05l-1.01-4.54h-1.41zM14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => generateContractPDF(client)}
+                              className="p-1.5 hover:bg-red-50 rounded-lg transition-colors group"
+                              title="Gerar PDF"
+                            >
+                              <svg className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm12 6V9c0-.55-.45-1-1-1h-2v5h2c.55 0 1-.45 1-1zm-2-3h1v3h-1V9zm-3 4h1.5c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1H11v4zm1-3h.5v2H12v-2zm-4 3h1v-1.5h1V12h-1V10.5h1V9H8v4z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
                         <td className="p-4 text-sm flex gap-3">
                           <button
                             onClick={() => handleEditClient(client)}
