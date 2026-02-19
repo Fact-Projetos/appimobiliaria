@@ -205,14 +205,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           .clause-title { font-weight: bold; margin-top: 14px; margin-bottom: 8px; text-align: center; text-transform: uppercase; display: block; width: 100%; }
           .clause-text { text-align: justify; margin-bottom: 10px; text-indent: 2.0cm; }
           .italic-paragraph { font-style: italic; }
+          .title-separator { border-bottom: 1.5pt solid black; padding-bottom: 5px; margin-bottom: 15px; }
           .signature-box { margin-top: 40px; text-align: center; }
           .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; margin-top: 35px; padding-top: 5px; }
         </style>
       </head>
       <body>
-        <div style="text-align: center; margin-bottom: 8px;">
-          <h2 class="main-title">CONTRATO DE LOCAÇÃO</h2>
-          <P>
+        <div style="text-align: center; margin-bottom: 6px;">
+          <div class="title-separator">
+            <h2 class="main-title" style="margin-bottom: 0;">CONTRATO DE LOCAÇÃO</h2>
+          </div>
           <h2 class="main-title">QUADRO DEMONSTRATIVO</h2>
         </div>
 
@@ -335,7 +337,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p class="clause-text">Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
 
         <div class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</div>
-        <p class="clause-text">O foro deste contrato, é o da Comarca de <span class="highlight">BARUERI-SP</span>.</p>
+        <p class="clause-text">O foro deste contrato, é o da Comarca de Barueri/SP para dirimir eventuais questões emergentes do presente instrumento..</p>
 
         <div class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</div>
         <p class="clause-text">O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.</p>
