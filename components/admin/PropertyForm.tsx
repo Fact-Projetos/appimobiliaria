@@ -42,8 +42,12 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
 
     // File states for uploads
     const [coverFile, setCoverFile] = useState<File | null>(null);
-    const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
-    const [inspectionFiles, setInspectionFiles] = useState<FileList | null>(null);
+    const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+    const [inspectionFiles, setInspectionFiles] = useState<File[]>([]);
+
+    // Existing images for deletion management
+    const [existingGallery, setExistingGallery] = useState<string[]>([]);
+    const [existingInspection, setExistingInspection] = useState<string[]>([]);
 
     const [loading, setLoading] = useState(false);
 
@@ -100,6 +104,9 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 ownerCpf: editingProperty.ownerCpf || '',
                 ownerPhone: editingProperty.ownerPhone || ''
             });
+
+            setExistingGallery(editingProperty.galleryUrls ? editingProperty.galleryUrls.split(',').filter(url => url.length > 0) : []);
+            setExistingInspection(editingProperty.inspectionUrls ? editingProperty.inspectionUrls.split(',').filter(url => url.length > 0) : []);
         }
     }, [editingProperty]);
 
@@ -110,7 +117,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
     };
 
     // Helper to upload multiple files
-    const uploadFiles = async (files: FileList | null, prefix: string): Promise<string[]> => {
+    const uploadFiles = async (files: File[], prefix: string): Promise<string[]> => {
         if (!files || files.length === 0) return [];
         const uploadedUrls: string[] = [];
 
@@ -161,24 +168,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
             }
 
             // 2. Upload Gallery Images
-            if (galleryFiles && galleryFiles.length > 0) {
+            let currentGalleryUrls = [...existingGallery];
+            if (galleryFiles.length > 0) {
                 const newGalleryUrls = await uploadFiles(galleryFiles, 'gallery');
-                if (newGalleryUrls.length > 0) {
-                    const existing = galleryUrlString ? galleryUrlString.split(',') : [];
-                    const combined = [...existing, ...newGalleryUrls];
-                    galleryUrlString = combined.join(',');
-                }
+                currentGalleryUrls = [...currentGalleryUrls, ...newGalleryUrls];
             }
+            galleryUrlString = currentGalleryUrls.join(',');
 
             // 3. Upload Inspection Images
-            if (inspectionFiles && inspectionFiles.length > 0) {
+            let currentInspectionUrls = [...existingInspection];
+            if (inspectionFiles.length > 0) {
                 const newInspectionUrls = await uploadFiles(inspectionFiles, 'inspection');
-                if (newInspectionUrls.length > 0) {
-                    const existing = inspectionUrlString ? inspectionUrlString.split(',') : [];
-                    const combined = [...existing, ...newInspectionUrls];
-                    inspectionUrlString = combined.join(',');
-                }
+                currentInspectionUrls = [...currentInspectionUrls, ...newInspectionUrls];
             }
+            inspectionUrlString = currentInspectionUrls.join(',');
 
             // 4. Save to Database
             const payload = {
@@ -253,6 +256,55 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
         (parseFloat(formData.fireInsurance) || 0) +
         (parseFloat(formData.serviceCharge) || 0)
     ).toFixed(2);
+
+    const PhotoGrid = ({ urls, files, onRemoveExisting, onRemoveNew, title }: {
+        urls: string[],
+        files: File[],
+        onRemoveExisting?: (url: string) => void,
+        onRemoveNew?: (index: number) => void,
+        title: string
+    }) => {
+        if (urls.length === 0 && files.length === 0) return null;
+
+        return (
+            <div className="mt-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase mb-3 tracking-widest">{title}</p>
+                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                    {urls.map((url, i) => (
+                        <div key={`existing-${i}`} className="relative aspect-square group">
+                            <img src={url} alt="" className="w-full h-full object-cover rounded-xl border border-gray-100 shadow-sm" />
+                            {onRemoveExisting && (
+                                <button
+                                    type="button"
+                                    onClick={() => onRemoveExisting(url)}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 shadow-md z-10"
+                                >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {files.map((file, i) => (
+                        <div key={`new-${i}`} className="relative aspect-square group">
+                            <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover rounded-xl border-2 border-dashed border-[#4A5D23] opacity-60" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="bg-[#4A5D23] text-white text-[8px] font-bold uppercase px-2 py-1 rounded-full shadow-sm">Novo</span>
+                            </div>
+                            {onRemoveNew && (
+                                <button
+                                    type="button"
+                                    onClick={() => onRemoveNew(i)}
+                                    className="absolute -top-2 -right-2 bg-gray-800 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-black shadow-md z-10"
+                                >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="animate-fadeIn space-y-10">
@@ -438,38 +490,82 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Imagens e Vistoria</h4>
                     </div>
                     <div className="p-5">
-                        <div className="mb-4">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Foto de Capa {editingProperty && '(Deixe vazio para manter)'}</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
-                                className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
-                            />
-                            {editingProperty && <p className="text-[10px] text-green-600 mt-1">Imagem atual mantida se não enviar nova.</p>}
+                        <div className="mb-6">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Foto de Capa {editingProperty && '(Deixe vazio para manter)'}</label>
+                            <div className="flex items-start gap-4">
+                                <div className="flex-1">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+                                        className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
+                                    />
+                                    {editingProperty && !coverFile && <p className="text-[10px] text-green-600 mt-1">Imagem atual mantida se não enviar nova.</p>}
+                                </div>
+                                {(coverFile || (editingProperty && editingProperty.imageUrl)) && (
+                                    <div className="w-20 h-20 relative rounded-xl overflow-hidden border border-gray-100 shadow-sm flex-shrink-0">
+                                        <img
+                                            src={coverFile ? URL.createObjectURL(coverFile) : editingProperty?.imageUrl}
+                                            alt="Preview Capa"
+                                            className="w-full h-full object-cover"
+                                        />
+                                        {coverFile && (
+                                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                                <span className="text-[8px] text-white font-bold uppercase">Novo</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Galeria de Fotos (Adicionar Novas)</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Galeria de Fotos (Adicionar Novas)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     multiple
-                                    onChange={(e) => setGalleryFiles(e.target.files)}
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            setGalleryFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                                        }
+                                    }}
                                     className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Fotos da Vistoria (Adicionar Novas)</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Fotos da Vistoria (Adicionar Novas)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     multiple
-                                    onChange={(e) => setInspectionFiles(e.target.files)}
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            setInspectionFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                                        }
+                                    }}
                                     className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <PhotoGrid
+                                title="Visualização da Galeria"
+                                urls={existingGallery}
+                                files={galleryFiles}
+                                onRemoveExisting={(url) => setExistingGallery(prev => prev.filter(u => u !== url))}
+                                onRemoveNew={(index) => setGalleryFiles(prev => prev.filter((_, i) => i !== index))}
+                            />
+
+                            <PhotoGrid
+                                title="Visualização da Vistoria"
+                                urls={existingInspection}
+                                files={inspectionFiles}
+                                onRemoveExisting={(url) => setExistingInspection(prev => prev.filter(u => u !== url))}
+                                onRemoveNew={(index) => setInspectionFiles(prev => prev.filter((_, i) => i !== index))}
+                            />
                         </div>
                     </div>
                 </div>
