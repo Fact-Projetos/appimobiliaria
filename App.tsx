@@ -54,6 +54,22 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Efeito para tratar links profundos (Deep Linking) de imóveis
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const propId = params.get('prop');
+
+    if (propId && properties.length > 0) {
+      const prop = properties.find(p => p.id === propId);
+      if (prop) {
+        setSelectedProperty(prop);
+        setActiveTab('home');
+        // Opcional: Limpar o parâmetro da URL sem recarregar a página
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, [properties]);
+
   const fetchProperties = async () => {
     try {
       const { data, error } = await supabase.from('properties').select('*').order('created_at', { ascending: false });

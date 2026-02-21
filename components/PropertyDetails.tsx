@@ -135,7 +135,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property, onBack }) =
 
   const handleWhatsApp = () => {
     const message = `Olá, tenho interesse no imóvel: ${property.title}.`;
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/5511966255047?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
