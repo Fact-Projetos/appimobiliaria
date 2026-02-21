@@ -78,6 +78,12 @@ const Header: React.FC<HeaderProps> = ({ onNav, activeTab, companySettings, sess
             >
               Alugar
             </button>
+            <button
+              onClick={() => onNav('public-register')}
+              className={`${activeTab === 'public-register' ? 'text-[#4A5D23] border-b-2 border-[#4A5D23]' : 'text-gray-500'} hover:text-[#4A5D23] transition-all text-xs font-bold uppercase tracking-widest py-1`}
+            >
+              Cadastre seu Imóvel
+            </button>
           </nav>
 
           <div className="flex items-center gap-3">

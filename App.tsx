@@ -9,6 +9,7 @@ import PropertyCard from './components/PropertyCard';
 import PropertyDetails from './components/PropertyDetails';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
+import PropertyForm from './components/admin/PropertyForm';
 import { supabase } from './lib/supabaseClient';
 
 const App: React.FC = () => {
@@ -146,7 +147,7 @@ const App: React.FC = () => {
       setFilters(prev => ({ ...prev, operation: 'Venda' }));
     } else if (tab === 'rent') {
       setFilters(prev => ({ ...prev, operation: 'Aluguel' }));
-    } else if (tab === 'home') {
+    } else if (tab === 'home' || tab === 'public-register') {
       setFilters(prev => ({ ...prev, operation: 'Todos' }));
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -350,6 +351,26 @@ const App: React.FC = () => {
               )}
             </form>
           </div>
+        </div>
+      );
+    }
+
+    if (activeTab === 'public-register') {
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-light text-black mb-4 uppercase tracking-widest font-serif">Cadastre seu Imóvel</h2>
+            <p className="text-gray-500 max-w-lg mx-auto leading-relaxed">Preencha as informações abaixo para disponibilizarmos seu imóvel em nossa plataforma. Nossa equipe entrará em contato para validar os detalhes.</p>
+          </div>
+          <PropertyForm
+            editingProperty={null}
+            onCancel={() => setActiveTab('home')}
+            onSuccess={() => {
+              setActiveTab('home');
+              fetchProperties();
+              alert('Imóvel cadastrado com sucesso! Em breve ele estará visível para todos.');
+            }}
+          />
         </div>
       );
     }
