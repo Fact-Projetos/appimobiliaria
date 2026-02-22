@@ -331,11 +331,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p class="clause-text">Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
 
         <div class="clause-title">CLÁUSULA NONA</div>
-        <p class="clause-text">Como garantia do cumprimento das obrigações pactuadas a caução no valor de 2 aluguéis no valor de <span class="highlight">${formatCurrency(caucao)}</span>, será a forma de seguro podendo ultrapassar esse valor caso esse valor não cubra as despesas no final do contrato, feitas pelo locatário, qualificados no preâmbulo deste instrumento, responsabilizando-se, como principais pagadores, pelo fiel cumprimento de todas as cláusulas ora reciprocamente estipuladas e aceitas, inclusive indenização de danos no imóvel e reparos necessários, além dos ônus judiciais respectivos.</p>
-        
-        <p class="clause-text italic-paragraph">§ 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.</p>
-        
-        <p class="clause-text italic-paragraph">§ 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
+        ${client.rental_warranty === 'Seguro Fiança' ? `
+          <p class="clause-text">Para garantia do fiel cumprimento de todas as obrigações assumidas neste contrato, o LOCATÁRIO apresentará, antes da entrega das chaves, Seguro Fiança Locatícia, contratado junto a seguradora devidamente autorizada pela SUSEP.</p>
+          <p class="clause-text">O seguro deverá:</p>
+          <p class="clause-text">I. Garantir o pagamento dos aluguéis, encargos da locação, multas contratuais, danos ao imóvel e demais obrigações previstas neste contrato;</p>
+          <p class="clause-text">II. Permanecer vigente durante todo o prazo da locação, inclusive em eventuais prorrogações, devendo ser renovado pelo LOCATÁRIO sempre que necessário;</p>
+          <p class="clause-text">III. Ser entregue ao LOCADOR a respectiva apólice e comprovante de pagamento.</p>
+          <p class="clause-text">O não pagamento do prêmio do seguro ou a não renovação da apólice caracterizará infração contratual, podendo ensejar a rescisão do contrato, nos termos da legislação vigente.</p>
+        ` : `
+          <p class="clause-text">Como garantia do cumprimento das obrigações pactuadas a caução no valor de 2 aluguéis no valor de <span class="highlight">${formatCurrency(caucao)}</span>, será a forma de seguro podendo ultrapassar esse valor caso esse valor não cubra as despesas no final do contrato, feitas pelo locatário, qualificados no preâmbulo deste instrumento, responsabilizando-se, como principais pagadores, pelo fiel cumprimento de todas as cláusulas ora reciprocamente estipuladas e aceitas, inclusive indenização de danos no imóvel e reparos necessários, além dos ônus judiciais respectivos.</p>
+          
+          <p class="clause-text italic-paragraph">§ 1° O LOCADOR pode ser cientificado ou citado para a ação de despejo contra o LOCATARIO, obrigando-se, inclusive, às despesas judiciais, acessórias da dívida principal, e honorários de advogado, no importe definido por ambas as partes sobre o valor da causa, quer quanto à ação de despejo, quer quanto à execução de aluguéis, tributos e demais encargos.</p>
+          
+          <p class="clause-text italic-paragraph">§ 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
+        `}
 
         <div class="clause-title">CLÁUSULA DÉCIMA</div>
         <p class="clause-text">É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
