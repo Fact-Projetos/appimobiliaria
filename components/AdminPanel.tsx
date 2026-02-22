@@ -279,7 +279,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             </td>
           </tr>
           <tr>
-            <td>Condomínio</td>
+            <td>Condomínio [${client.condo_variation || 'Sem Variação'}]</td>
             <td style="text-align: right;">${formatCurrency(condo)}</td>
           </tr>
           <tr>

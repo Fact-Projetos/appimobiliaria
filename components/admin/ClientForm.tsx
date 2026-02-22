@@ -34,7 +34,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         payment_due_day: editingClient?.payment_due_day?.toString() || '',
         contract_value: editingClient?.contract_value?.toString() || '',
         property_conditions: editingClient?.property_conditions || 'Pintura Realizada',
-        rental_warranty: editingClient?.rental_warranty || 'Caução'
+        rental_warranty: editingClient?.rental_warranty || 'Caução',
+        condo_variation: editingClient?.condo_variation || 'Sem Variação'
     });
 
     // Add another state for property interest if it comes from the object
@@ -154,6 +155,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                 status: editingClient?.status || 'Contrato Ativo',
                 property_conditions: clientData.property_conditions,
                 rental_warranty: clientData.rental_warranty,
+                condo_variation: clientData.condo_variation,
                 id_document_url: idDocumentUrl || editingClient?.id_document_url,
                 proof_of_address_url: proofAddressUrl || editingClient?.proof_of_address_url,
                 income_proof_url: incomeProofUrl || editingClient?.income_proof_url
@@ -288,6 +290,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                                 <select name="property_conditions" value={clientData.property_conditions} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
                                     <option value="Pintura Realizada">Pintura Realizada</option>
                                     <option value="Pintura ñ Realizada">Pintura ñ Realizada</option>
+                                </select>
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Condomínio (Variação)</label>
+                                <select name="condo_variation" value={clientData.condo_variation} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
+                                    <option value="Com Variação">Com Variação</option>
+                                    <option value="Sem Variação">Sem Variação</option>
                                 </select>
                             </div>
                         </div>

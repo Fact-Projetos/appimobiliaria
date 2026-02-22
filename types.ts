@@ -60,6 +60,7 @@ export interface Client {
   income_proof_url?: string;
   property_conditions?: string;
   rental_warranty?: string;
+  condo_variation?: string;
 }
 
 export interface Partner {
