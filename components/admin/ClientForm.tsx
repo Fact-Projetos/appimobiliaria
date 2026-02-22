@@ -35,7 +35,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         contract_value: editingClient?.contract_value?.toString() || '',
         property_conditions: editingClient?.property_conditions || 'Pintura Realizada',
         rental_warranty: editingClient?.rental_warranty || 'Caução',
-        condo_variation: editingClient?.condo_variation || 'Sem Variação'
+        condo_variation: editingClient?.condo_variation || 'Sem Variação',
+        residents: editingClient?.residents || ''
     });
 
     // Add another state for property interest if it comes from the object
@@ -156,6 +157,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                 property_conditions: clientData.property_conditions,
                 rental_warranty: clientData.rental_warranty,
                 condo_variation: clientData.condo_variation,
+                residents: clientData.residents,
                 id_document_url: idDocumentUrl || editingClient?.id_document_url,
                 proof_of_address_url: proofAddressUrl || editingClient?.proof_of_address_url,
                 income_proof_url: incomeProofUrl || editingClient?.income_proof_url
@@ -255,6 +257,17 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Endereço</label>
                                 <input type="text" name="address" value={clientData.address} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Rua, Av..." />
                             </div>
+                        </div>
+                        <div className="border-t border-gray-100 pt-3">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Residentes do Imóvel (Nome e CPF)</label>
+                            <textarea
+                                name="residents"
+                                value={clientData.residents}
+                                onChange={(e) => setClientData(prev => ({ ...prev, residents: e.target.value }))}
+                                placeholder="Ex: Nome do Residente - CPF: 000.000.000-00 (Um por linha)"
+                                className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs min-h-[80px]"
+                            />
+                            <p className="text-[9px] text-gray-400 mt-1 italic">Insira um residente por linha conforme o exemplo acima.</p>
                         </div>
                     </div>
                 </div>

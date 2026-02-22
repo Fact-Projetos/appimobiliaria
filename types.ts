@@ -61,6 +61,7 @@ export interface Client {
   property_conditions?: string;
   rental_warranty?: string;
   condo_variation?: string;
+  residents?: string;
 }
 
 export interface Partner {
