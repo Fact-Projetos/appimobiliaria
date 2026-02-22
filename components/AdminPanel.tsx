@@ -302,24 +302,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
 
         <p class="clause-text">O LOCADOR e o LOCATÁRIO, acima qualificados, resolvem ajustar a locação do imóvel retro descrito, que ora contratam, sob as cláusulas e condições seguintes:</p>
 
-        <div class="clause-title">CLÁUSULA PRIMEIRA</div>
+        <div class="clause-title">CLÁUSULA PRIMEIRA – DA VIGÊNCIA</div>
         <p class="clause-text">A locação vigerá pelo período estabelecido no preâmbulo deste instrumento, devendo o LOCATÁRIO restituí-lo, findo o prazo, independente de notificação judicial ou extrajudicial.</p>
 
-        <div class="clause-title">CLÁUSULA SEGUNDA</div>
+        <div class="clause-title">CLÁUSULA SEGUNDA - DO VALOR MENSAL E REAJUSTE</div>
         <p class="clause-text">O valor mensal da locação será aquele pactuado no preâmbulo deste instrumento, e os aluguéis serão reajustados na periodicidade também retro mencionada, ou no menor período que a legislação vier a permitir, com base no índice IPCA\\IBGE.</p>
 
-        <div class="clause-title">CLÁUSULA TERCEIRA</div>
-        <p class="clause-text">O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária na conta do LOCADOR, ou outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.</p>
+        <div class="clause-title">CLÁUSULA TERCEIRA – DAS CONDIÇOES DE PAGAMENTO</div>
+        <p class="clause-text">O aluguel será exigível, impreterivelmente, no dia do vencimento, supra estabelecido, devendo o pagamento ser efetuado por transferência bancária ou via PIX, outro que lhe seja fixado por escrito. O pagamento após o prazo de vencimento implica na multa de mora de 2% DOIS POR CENTO mais juros de correção pela taxa SELIC sobre o débito.</p>
         
         <p class="clause-text italic-paragraph">Parágrafo único: A eventual tolerância em qualquer atraso ou demora no pagamento de aluguéis, impostos, taxas, seguro, ou demais encargos de responsabilidade do LOCATÁRIO, em hipótese alguma poderá ser considerada como modificação das condições do contrato, que permanecerão em vigor para todos os efeitos.</p>
 
-        <div class="clause-title">CLÁUSULA QUARTA</div>
-        <p class="clause-text">Além do aluguel são encargos do LOCATÁRIO o imposto predial (IPTU), o seguro de incêndio, a taxa de luz, força, saneamento, esgoto, condomínio e quaisquer outras que recaiam ou venham a recair sobre o imóvel locado, que serão pagas às repartições arrecadadoras respectivas. Incumbe ao LOCATÁRIO, também, satisfazer por sua conta as exigências das autoridades sanitárias de higiene, ou do condomínio.</p>
+        <div class="clause-title">CLÁUSULA QUARTA – DAS VARIAÇÕES</div>
+        <p class="clause-text">O Inquilino tem conhecimento de que os valores dos encargos locatícios previstos no Quadro Resumo são apenas referenciais, podendo sofrer alterações, pois são definidos por terceiros (por exemplo: pelo Poder Público, no caso do IPTU; pelo condomínio, no caso da taxa condominial). Em qualquer hipótese, o Inquilino tem conhecimento de que é sua a responsabilidade pagar a integralidade de tais encargos, podendo ser reembolsado pelo Locador caso pague valores por ele devidos.</p>
 
-        <div class="clause-title">CLÁUSULA QUINTA</div>
+        <div class="clause-title">CLÁUSULA QUINTA -DA ORBIGAÇÃO DO INQUILINO</div>
         <p class="clause-text">O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
 
-        <div class="clause-title">CLÁUSULA SEXTA</div>
+        <div class="clause-title">CLÁUSULA SEXTA – DAS CONDIÇÕES DO IMÓVEL</div>
         <p class="clause-text">O LOCATÁRIO recebe o imóvel, em perfeito estado de conservação, e obriga-se pela sua conservação, trazendo-o sempre nas mesmas condições, responsabilizando-se pela imediata reparação de qualquer estrago feito por si, seus prepostos ou visitors, obrigando-se, ainda, a restituí-lo, quando finda a locação, ou rescindida esta, com pintura usada, porém conservado, com todas as instalações em funcionamento. Sendo necessário substituir qualquer aparelho ou peça de instalação, fica entendido que esta substituição se fará por outra da mesma qualidade, de forma que, quando forem entregues as chaves, esteja o imóvel em condições de ser novamente alugado, sem que para isso seja necessária qualquer despesa por parte do LOCADOR.</p>
         
 
@@ -327,15 +327,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p class="clause-text">No imóvel terão os seguintes residentes:</p>
         ${client.residents ? client.residents.split('\n').map(r => `<p class="clause-text" style="margin-left: 2.0cm; margin-bottom: 2px;">${r.trim()}</p>`).join('') : '<p class="clause-text">Nenhum residente adicional informado.</p>'}
         
-        <p class="clause-text italic-paragraph">Parágrafo único: O LOCADOR, por si ou por preposto, poderá visitar o imóvel, durante a locação, para verificar o exato cumprimento das cláusulas deste contrato.</p>
+        <p class="clause-text italic-paragraph">Parágrafo único: O locatário ou o(s) residente(s) do imóvel poderão autorizar outros moradores sem prévia autorização de ambas as partes.</p>
 
-        <div class="clause-title">CLÁUSULA OITAVA</div>
+        <div class="clause-title">CLÁUSULA OITAVA – DA MULTA POR INFRAÇÃO</div>
         <p class="clause-text">A infração de qualquer das cláusulas deste contrato faz incorrer o infrator na multa irredutível no valor da caução de <span class="highlight">${formatCurrency(caucao)}</span> ou parcial, sobre o aluguel anual em vigor à época da infração, e importa na sua rescisao de pleno direito, independentemente de qualquer notificação ou aviso, sujeitando-se a parte inadimplente ao pagamento das perdas e danos que forem apuradas.</p>
 
-        <div class="clause-title">CLÁUSULA NONA</div>
+        <div class="clause-title">CLÁUSULA NONA – DAS BENFEITORIAS E OBRAS</div>
         <p class="clause-text">Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA – DA GARANTIA LOCATÍCIA</div>
         ${client.rental_warranty === 'Seguro Fiança' ? `
           <p class="clause-text">Para garantia do fiel cumprimento de todas as obrigações assumidas neste contrato, o LOCATÁRIO apresentará, antes da entrega das chaves, Seguro Fiança Locatícia, contratado junto a seguradora devidamente autorizada pela SUSEP.</p>
           <p class="clause-text">O seguro deverá:</p>
@@ -351,16 +351,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <p class="clause-text italic-paragraph">§ 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
         `}
 
-        <div class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA – DO SEGURO INCÊNDIO</div>
         <p class="clause-text">É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA SEGUNDA</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA SEGUNDA – DA VISTORIA</div>
+        <p class="clause-text">O LOCATÁRIO declara, neste ato, haver realizado vistoria prévia e minuciosa no imóvel objeto do presente contrato, recebendo-o em perfeitas condições de uso, conservação, limpeza e funcionamento, conforme descrito no Laudo de Vistoria que integra the presente instrumento como parte indissociável.</p>
+
+        <div class="clause-title">CLÁUSULA DÉCIMA TERCEIRA – DAS MEDIDAS JUDICIAIS</div>
         <p class="clause-text">Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA TERCEIRA</div>
-        <p class="clause-text">O foro deste contrato, é o da Comarca de Barueri/SP para dirimir eventuais questões emergentes do presente instrumento..</p>
+        <div class="clause-title">CLÁUSULA DÉCIMA QUARTA – DO FORO</div>
+        <p class="clause-text">O foro deste contrato, é o da Comarca de Barueri/SP para dirimir eventuais questões emergentes do presente instrumento.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA QUARTA</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA QUINTA – DISPOSIÇÕES FINAIS</div>
         <p class="clause-text">O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.</p>
         
         <p class="clause-text">Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
@@ -382,6 +385,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td style="vertical-align: middle;">${tenantName}</td>
             <td></td>
           </tr>
+          ${client.residents ? client.residents.split('\n').filter(r => r.trim()).map(r => `
+          <tr style="height: 60px;">
+            <td style="vertical-align: middle;">${r.trim()}</td>
+            <td></td>
+          </tr>
+          `).join('') : ''}
         </table>
       </body>
       </html>
