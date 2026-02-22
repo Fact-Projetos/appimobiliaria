@@ -108,7 +108,15 @@ const App: React.FC = () => {
           inspectionUrls: item.inspection_urls || '',
           ownerName: item.owner_name || '',
           ownerCpf: item.owner_cpf || '',
-          ownerPhone: item.owner_phone || ''
+          ownerPhone: item.owner_phone || '',
+          zip: item.zip || '',
+          number: item.number || '',
+          complement: item.complement || '',
+          state: item.state || '',
+          pets: item.pets || false,
+          furnished: item.furnished || false,
+          fireInsurance: Number(item.fire_insurance || 0),
+          serviceCharge: Number(item.service_charge || 0)
         }));
         setProperties(mappedProperties);
       }
