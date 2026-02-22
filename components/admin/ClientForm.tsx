@@ -56,6 +56,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
     const [proofAddressFile, setProofAddressFile] = useState<File | null>(null);
     const [incomeProofFile, setIncomeProofFile] = useState<File | null>(null);
 
+    const [idDocPreview, setIdDocPreview] = useState<string>(editingClient?.id_document_url || '');
+    const [proofAddressPreview, setProofAddressPreview] = useState<string>(editingClient?.proof_of_address_url || '');
+    const [incomeProofPreview, setIncomeProofPreview] = useState<string>(editingClient?.income_proof_url || '');
+
     const [propertySearch, setPropertySearch] = useState('');
     const [propertyCode, setPropertyCode] = useState('');
     const [selectedPropertyPrice, setSelectedPropertyPrice] = useState('');
@@ -355,37 +359,108 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                     </div>
                 </div>
 
-                {/* Section 5: Documentação */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-20">
                     <div className="bg-[#4A5D23] px-6 py-2">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Documentação</h4>
                     </div>
                     <div className="p-5 space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Documento de Identidade (RG/CNH)</label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div className="flex flex-col items-center">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block w-full text-left">Documento de Identidade (RG/CNH)</label>
+                                <div className="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center overflow-hidden mb-2">
+                                    {idDocPreview ? (
+                                        idDocPreview.toLowerCase().endsWith('.pdf') ? (
+                                            <div className="text-gray-400 flex flex-col items-center">
+                                                <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                <span className="text-[10px]">Documento PDF</span>
+                                            </div>
+                                        ) : (
+                                            <img src={idDocPreview} alt="Preview" className="w-full h-full object-cover" />
+                                        )
+                                    ) : (
+                                        <div className="text-gray-300 flex flex-col items-center">
+                                            <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span className="text-[10px]">Sem visualização</span>
+                                        </div>
+                                    )}
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
-                                    onChange={(e) => setIdDocumentFile(e.target.files?.[0] || null)}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0] || null;
+                                        setIdDocumentFile(file);
+                                        if (file) {
+                                            const url = URL.createObjectURL(file);
+                                            setIdDocPreview(url);
+                                        }
+                                    }}
                                     className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
-                            <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Comprovante de Residência</label>
+                            <div className="flex flex-col items-center">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block w-full text-left">Comprovante de Residência</label>
+                                <div className="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center overflow-hidden mb-2">
+                                    {proofAddressPreview ? (
+                                        proofAddressPreview.toLowerCase().endsWith('.pdf') ? (
+                                            <div className="text-gray-400 flex flex-col items-center">
+                                                <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                <span className="text-[10px]">Documento PDF</span>
+                                            </div>
+                                        ) : (
+                                            <img src={proofAddressPreview} alt="Preview" className="w-full h-full object-cover" />
+                                        )
+                                    ) : (
+                                        <div className="text-gray-300 flex flex-col items-center">
+                                            <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span className="text-[10px]">Sem visualização</span>
+                                        </div>
+                                    )}
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
-                                    onChange={(e) => setProofAddressFile(e.target.files?.[0] || null)}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0] || null;
+                                        setProofAddressFile(file);
+                                        if (file) {
+                                            const url = URL.createObjectURL(file);
+                                            setProofAddressPreview(url);
+                                        }
+                                    }}
                                     className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
-                            <div>
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Comprovante de Renda</label>
+                            <div className="flex flex-col items-center">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block w-full text-left">Comprovante de Renda</label>
+                                <div className="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center overflow-hidden mb-2">
+                                    {incomeProofPreview ? (
+                                        incomeProofPreview.toLowerCase().endsWith('.pdf') ? (
+                                            <div className="text-gray-400 flex flex-col items-center">
+                                                <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                <span className="text-[10px]">Documento PDF</span>
+                                            </div>
+                                        ) : (
+                                            <img src={incomeProofPreview} alt="Preview" className="w-full h-full object-cover" />
+                                        )
+                                    ) : (
+                                        <div className="text-gray-300 flex flex-col items-center">
+                                            <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span className="text-[10px]">Sem visualização</span>
+                                        </div>
+                                    )}
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*,application/pdf"
-                                    onChange={(e) => setIncomeProofFile(e.target.files?.[0] || null)}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0] || null;
+                                        setIncomeProofFile(file);
+                                        if (file) {
+                                            const url = URL.createObjectURL(file);
+                                            setIncomeProofPreview(url);
+                                        }
+                                    }}
                                     className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-[#4A5D23] file:text-white hover:file:bg-black transition-all"
                                 />
                             </div>
