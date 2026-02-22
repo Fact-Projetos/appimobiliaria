@@ -170,9 +170,26 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
       ? `${property.street || ''}, ${property.number || ''}${property.complement ? `, ${property.complement}` : ''} - ${property.neighborhood || ''}, ${property.city || ''}/${property.state || ''}`
       : (client.property_interest || '-');
 
-    const startDate = client.contract_start_date ? new Date(client.contract_start_date).toLocaleDateString('pt-BR') : '-';
-    const endDate = client.contract_end_date ? new Date(client.contract_end_date).toLocaleDateString('pt-BR') : '-';
-    const duration = client.contract_duration || 30;
+    const formatDate = (dateStr: string | undefined | null) => {
+      if (!dateStr) return '-';
+      // Se vier no formato YYYY-MM-DD
+      const parts = dateStr.split('-');
+      if (parts.length === 3 && parts[0].length === 4) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+      // Fallback para outros formatos
+      try {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return dateStr;
+        return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+      } catch (e) {
+        return dateStr;
+      }
+    };
+
+    const startDate = formatDate(client.contract_start_date);
+    const endDate = formatDate(client.contract_end_date);
+    const duration = client.contract_duration || '-';
 
     const rent = client.contract_value || property?.price || 0;
     const condo = property?.condoPrice || 0;
@@ -259,7 +276,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <tr style="text-align: center;">
             <td>${startDate}</td>
             <td>${endDate}</td>
-            <td>${duration} meses</td>
+            <td>${duration}${duration !== '-' ? ' meses' : ''}</td>
             <td>${client.rental_warranty || '-'}</td>
           </tr>
         </table>
