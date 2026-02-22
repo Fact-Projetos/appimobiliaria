@@ -316,7 +316,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <div class="clause-title">CLÁUSULA QUARTA – DAS VARIAÇÕES</div>
         <p class="clause-text">O Inquilino tem conhecimento de que os valores dos encargos locatícios previstos no Quadro Resumo são apenas referenciais, podendo sofrer alterações, pois são definidos por terceiros (por exemplo: pelo Poder Público, no caso do IPTU; pelo condomínio, no caso da taxa condominial). Em qualquer hipótese, o Inquilino tem conhecimento de que é sua a responsabilidade pagar a integralidade de tais encargos, podendo ser reembolsado pelo Locador caso pague valores por ele devidos.</p>
 
-        <div class="clause-title">CLÁUSULA QUINTA -DA ORBIGAÇÃO DO INQUILINO</div>
+        <div class="clause-title">CLÁUSULA QUINTA -DA OBRIGAÇÃO DO INQUILINO</div>
         <p class="clause-text">O LOCATÁRIO não poderá sublocar, no seu todo ou em parte, o imóvel, e dele usará de forma a não prejudicar as condições estéticas e de segurança, moral, bem como a tranquilidade e o bem-estar dos vizinhos.</p>
 
         <div class="clause-title">CLÁUSULA SEXTA – DAS CONDIÇÕES DO IMÓVEL</div>
@@ -329,13 +329,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         
         <p class="clause-text italic-paragraph">Parágrafo único: O locatário ou o(s) residente(s) do imóvel poderão autorizar outros moradores sem prévia autorização de ambas as partes.</p>
 
-        <div class="clause-title">CLÁUSULA OITAVA – DA MULTA POR INFRAÇÃO</div>
-        <p class="clause-text">A infração de qualquer das cláusulas deste contrato faz incorrer o infrator na multa irredutível no valor da caução de <span class="highlight">${formatCurrency(caucao)}</span> ou parcial, sobre o aluguel anual em vigor à época da infração, e importa na sua rescisao de pleno direito, independentemente de qualquer notificação ou aviso, sujeitando-se a parte inadimplente ao pagamento das perdas e danos que forem apuradas.</p>
-
-        <div class="clause-title">CLÁUSULA NONA – DAS BENFEITORIAS E OBRAS</div>
+        <div class="clause-title">CLÁUSULA OITAVA – DAS MODIFICAÇÕES NO IMÓVEL</div>
         <p class="clause-text">Nenhuma obra ou modificação será feita no imóvel sem autorização prévia e escrita do LOCADOR. Qualquer benfeitoria porventura construída adere ao imóvel, renunciando o LOCATÁRIO, expressamente, ao direito de retenção ou de indenização, salvo se convier ao LOCADOR que tudo seja reposto no anterior estado, cabendo, neste caso, ao LOCATÁRIO fazer a reposição por sua conta, responsabilizando-se por aluguéis, tributos e encargos até a conclusão da obra.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA – DA GARANTIA LOCATÍCIA</div>
+        <div class="clause-title">CLÁUSULA NONA – DA GARANTIA LOCATÍCIA</div>
         ${client.rental_warranty === 'Seguro Fiança' ? `
           <p class="clause-text">Para garantia do fiel cumprimento de todas as obrigações assumidas neste contrato, o LOCATÁRIO apresentará, antes da entrega das chaves, Seguro Fiança Locatícia, contratado junto a seguradora devidamente autorizada pela SUSEP.</p>
           <p class="clause-text">O seguro deverá:</p>
@@ -351,19 +348,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           <p class="clause-text italic-paragraph">§ 2° A responsabilidade do LOCATÁRIO pelo aluguel e demais obrigações legais e contratuais só terminará com a devolução definitiva das chaves e quitação de todos os débitos de locação e os consectários legais e contratuais, inclusive reparos, se necessários.</p>
         `}
 
-        <div class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA – DO SEGURO INCÊNDIO</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA – DO SEGURO</div>
         <p class="clause-text">É de responsabilidade do LOCATÁRIO o pagamento do seguro anual de incêndio do imóvel locado, em nome do LOCADOR, garantindo o seu valor real.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA SEGUNDA – DA VISTORIA</div>
-        <p class="clause-text">O LOCATÁRIO declara, neste ato, haver realizado vistoria prévia e minuciosa no imóvel objeto do presente contrato, recebendo-o em perfeitas condições de uso, conservação, limpeza e funcionamento, conforme descrito no Laudo de Vistoria que integra the presente instrumento como parte indissociável.</p>
+        <div class="clause-title">CLÁUSULA DÉCIMA PRIMEIRA – DA VISTORIA</div>
+        <p class="clause-text">O LOCATÁRIO declara, neste ato, haver realizado vistoria prévia e minuciosa no imóvel objeto do presente contrato, recebendo-o em perfeitas condições de uso, conservação, limpeza e funcionamento, conforme descrito no Laudo de Vistoria que integra o presente instrumento como parte indissociável.</p>
+        <p class="clause-text italic-paragraph">Parágrafo 1º - O Laudo de Vistoria inicial, devidamente assinado pelas partes, conterá a descrição detalhada do estado do imóvel, suas instalações, benfeitorias, equipamentos, móveis (se houver) e demais acessórios, servindo como parâmetro para aferição das condições do bem ao término da locação.</p>
+        <p class="clause-text italic-paragraph">Parágrafo 2º - Ao final da locação, será realizada vistoria de saída, comprometendo-se o LOCATÁRIO a restituí-lo nas mesmas condições em que o recebeu, ressalvadas as deteriorações decorrentes do uso normal e do decurso do tempo, nos termos do art. 23, inciso III, da Lei nº 8.245/1991.</p>
+        <p class="clause-text italic-paragraph">Parágrafo 3º - Constatados danos, avarias ou modificações não autorizadas, ficará o LOCATÁRIO obrigado a reparar, substituir ou indenizar o LOCADOR pelos prejuízos verificados, no prazo estipulado por este, sob pena de execução das garantias contratuais e demais medidas cabíveis.</p>
+        <p class="clause-text italic-paragraph">Parágrafo 4º - A eventual recusa do LOCATÁRIO em acompanhar a vistoria final não impede sua realização, presumindo-se como verdadeiras as informações constantes no respectivo laudo, desde que devidamente documentadas.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA TERCEIRA – DAS MEDIDAS JUDICIAIS</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA SEGUNDA – DA MEDIDA JUDICIAL</div>
         <p class="clause-text">Na hipótese de ser necessária qualquer medida judicial, o LOCADOR e LOCATÁRIO poderão ser citados pelo correio, com Aviso de Recebimento dirigido aos respectivos endereços mencionados no preâmbulo deste instrumento.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA QUARTA – DO FORO</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA TERCEIRA – DO FORO</div>
         <p class="clause-text">O foro deste contrato, é o da Comarca de Barueri/SP para dirimir eventuais questões emergentes do presente instrumento.</p>
 
-        <div class="clause-title">CLÁUSULA DÉCIMA QUINTA – DISPOSIÇÕES FINAIS</div>
+        <div class="clause-title">CLÁUSULA DÉCIMA QUARTA – DISPOSIÇÕES FINAIS</div>
         <p class="clause-text">O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.</p>
         
         <p class="clause-text">Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
