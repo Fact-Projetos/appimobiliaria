@@ -404,7 +404,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td></td>
           </tr>
           <tr style="height: 60px;">
-            <td style="vertical-align: middle;">Flavia Catarina Nascimento Gonçalvez [Intermediadora]</td>
+            <td style="vertical-align: middle;">Flavia Catarina Nascimento Gonçalves [Intermediadora]</td>
             <td></td>
           </tr>
         </table>
