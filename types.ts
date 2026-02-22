@@ -58,6 +58,7 @@ export interface Client {
   id_document_url?: string;
   proof_of_address_url?: string;
   income_proof_url?: string;
+  property_conditions?: string;
 }
 
 export interface Partner {

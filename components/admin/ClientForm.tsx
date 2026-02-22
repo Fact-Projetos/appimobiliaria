@@ -32,7 +32,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         contract_end_date: editingClient?.contract_end_date || '',
         contract_duration: editingClient?.contract_duration?.toString() || '',
         payment_due_day: editingClient?.payment_due_day?.toString() || '',
-        contract_value: editingClient?.contract_value?.toString() || ''
+        contract_value: editingClient?.contract_value?.toString() || '',
+        property_conditions: editingClient?.property_conditions || 'Pintura Realizada'
     });
 
     // Add another state for property interest if it comes from the object
@@ -150,6 +151,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                 payment_due_day: clientData.payment_due_day ? Number(clientData.payment_due_day) : null,
 
                 status: editingClient?.status || 'Contrato Ativo',
+                property_conditions: clientData.property_conditions,
                 id_document_url: idDocumentUrl || editingClient?.id_document_url,
                 proof_of_address_url: proofAddressUrl || editingClient?.proof_of_address_url,
                 income_proof_url: incomeProofUrl || editingClient?.income_proof_url
@@ -254,7 +256,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                 </div>
 
                 {/* Section 3: Informações do Imóvel */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
                     <div className="bg-[#4A5D23] px-6 py-2">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Informações do Imóvel</h4>
                     </div>
@@ -278,6 +280,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                             <div className="md:col-span-2">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Valor Anunciado</label>
                                 <input type="text" readOnly value={selectedPropertyPrice ? `R$ ${Number(selectedPropertyPrice).toFixed(2)}` : ''} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Condições do Imóvel</label>
+                                <select name="property_conditions" value={clientData.property_conditions} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
+                                    <option value="Pintura Realizada">Pintura Realizada</option>
+                                    <option value="Pintura ñ Realizada">Pintura ñ Realizada</option>
+                                </select>
                             </div>
                         </div>
                     </div>
