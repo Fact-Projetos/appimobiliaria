@@ -33,7 +33,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         contract_duration: editingClient?.contract_duration?.toString() || '',
         payment_due_day: editingClient?.payment_due_day?.toString() || '',
         contract_value: editingClient?.contract_value?.toString() || '',
-        property_conditions: editingClient?.property_conditions || 'Pintura Realizada'
+        property_conditions: editingClient?.property_conditions || 'Pintura Realizada',
+        rental_warranty: editingClient?.rental_warranty || 'Caução'
     });
 
     // Add another state for property interest if it comes from the object
@@ -152,6 +153,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
 
                 status: editingClient?.status || 'Contrato Ativo',
                 property_conditions: clientData.property_conditions,
+                rental_warranty: clientData.rental_warranty,
                 id_document_url: idDocumentUrl || editingClient?.id_document_url,
                 proof_of_address_url: proofAddressUrl || editingClient?.proof_of_address_url,
                 income_proof_url: incomeProofUrl || editingClient?.income_proof_url
@@ -318,6 +320,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                                     {[1, 5, 10, 15, 20, 25, 30].map(day => (
                                         <option key={day} value={day}>{day}</option>
                                     ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Garantia Locatícia</label>
+                                <select name="rental_warranty" value={clientData.rental_warranty} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs">
+                                    <option value="Caução">Caução</option>
+                                    <option value="Seguro Fiança">Seguro Fiança</option>
                                 </select>
                             </div>
                         </div>

@@ -59,6 +59,7 @@ export interface Client {
   proof_of_address_url?: string;
   income_proof_url?: string;
   property_conditions?: string;
+  rental_warranty?: string;
 }
 
 export interface Partner {

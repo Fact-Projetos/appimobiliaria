@@ -233,30 +233,34 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         </table>
 
         <table class="summary-table" style="border-top: none;">
-          <tr class="summary-header"><td colspan="3">Informações do Imóvel</td></tr>
+          <tr class="summary-header"><td colspan="4">Informações do Imóvel</td></tr>
           <tr style="font-weight: bold;">
-            <td width="20%">Tipo do Imóvel</td>
-            <td width="60%">Endereço do Imóvel</td>
-            <td width="20%">Finalidade</td>
+            <td width="15%">Tipo do Imóvel</td>
+            <td width="50%">Endereço do Imóvel</td>
+            <td width="15%">Finalidade</td>
+            <td width="20%">Condições do Imóvel</td>
           </tr>
           <tr>
             <td style="text-align: center;">${propType}</td>
             <td>${propAddress}</td>
             <td style="text-align: center;">Residencial</td>
+            <td style="text-align: center;">${client.property_conditions || '-'}</td>
           </tr>
         </table>
 
         <table class="summary-table" style="border-top: none;">
-          <tr class="summary-header"><td colspan="3">Informações de Vigência</td></tr>
+          <tr class="summary-header"><td colspan="4">Informações de Vigência</td></tr>
           <tr style="font-weight: bold; text-align: center;">
-            <td width="33%">Data Inicial</td>
-            <td width="33%">Data Final</td>
-            <td width="34%">Total em Meses</td>
+            <td width="25%">Data Inicial</td>
+            <td width="25%">Data Final</td>
+            <td width="25%">Total em Meses</td>
+            <td width="25%">Garantia Locatícia</td>
           </tr>
           <tr style="text-align: center;">
             <td>${startDate}</td>
             <td>${endDate}</td>
             <td>${duration} meses</td>
+            <td>${client.rental_warranty || '-'}</td>
           </tr>
         </table>
 
