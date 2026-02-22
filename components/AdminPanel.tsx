@@ -386,12 +386,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
             <td style="vertical-align: middle;">${tenantName}</td>
             <td></td>
           </tr>
-          ${client.residents ? client.residents.split('\n').filter(r => r.trim()).map(r => `
           <tr style="height: 60px;">
-            <td style="vertical-align: middle;">${r.trim()}</td>
+            <td style="vertical-align: middle;">Flavia Catarina Nascimento Gonçalvez [Intermediadora]</td>
             <td></td>
           </tr>
-          `).join('') : ''}
         </table>
       </body>
       </html>
