@@ -43,10 +43,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
     React.useEffect(() => {
         if (editingClient?.property_interest) {
             setPropertySearch(editingClient.property_interest);
-            const prop = properties.find(p => p.title === editingClient.property_interest);
+            const prop = properties.find(p =>
+                p.title.trim().toLowerCase() === editingClient.property_interest?.trim().toLowerCase() ||
+                p.id === editingClient.property_interest
+            );
             if (prop) {
                 setPropertyCode(prop.id);
                 setSelectedPropertyPrice(prop.price.toString());
+                setSelectedPropertyCondo(prop.condoPrice?.toString() || '0');
+                setSelectedPropertyIptu(prop.iptuPrice?.toString() || '0');
             }
         }
     }, [editingClient, properties]);
@@ -63,6 +68,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
     const [propertySearch, setPropertySearch] = useState('');
     const [propertyCode, setPropertyCode] = useState('');
     const [selectedPropertyPrice, setSelectedPropertyPrice] = useState('');
+    const [selectedPropertyCondo, setSelectedPropertyCondo] = useState('');
+    const [selectedPropertyIptu, setSelectedPropertyIptu] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -75,6 +82,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         setPropertySearch(property.title);
         setPropertyCode(property.id);
         setSelectedPropertyPrice(property.price.toString());
+        setSelectedPropertyCondo(property.condoPrice?.toString() || '0');
+        setSelectedPropertyIptu(property.iptuPrice?.toString() || '0');
         // Auto-fill contract value
         setClientData(prev => ({ ...prev, contract_value: property.price.toString() }));
         setShowSuggestions(false);
@@ -299,8 +308,16 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                                 )}
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Valor Anunciado</label>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Aluguel Base</label>
                                 <input type="text" readOnly value={selectedPropertyPrice ? `R$ ${Number(selectedPropertyPrice).toFixed(2)}` : ''} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Condomínio</label>
+                                <input type="text" readOnly value={selectedPropertyCondo ? `R$ ${Number(selectedPropertyCondo).toFixed(2)}` : ''} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">IPTU</label>
+                                <input type="text" readOnly value={selectedPropertyIptu ? `R$ ${Number(selectedPropertyIptu).toFixed(2)}` : ''} className="w-full p-2 bg-gray-100 border border-transparent rounded-lg text-gray-600 font-bold outline-none cursor-not-allowed text-xs" />
                             </div>
                             <div className="md:col-span-2">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Condições do Imóvel</label>
@@ -468,12 +485,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                     </div>
                 </div>
 
-            </form>
+            </form >
             <div className="fixed bottom-0 right-0 left-0 lg:left-[288px] bg-white border-t border-gray-100 p-6 flex justify-end gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-20">
                 <button onClick={onCancel} className="px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all">Cancelar</button>
                 <button onClick={handleSaveClient} disabled={loading} className="bg-[#4A5D23] text-white px-10 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all disabled:opacity-50">{loading ? 'Salvando...' : (editingClient ? 'Salvar Alterações' : 'Finalizar Contrato')}</button>
             </div>
-        </div>
+        </div >
     );
 };
 

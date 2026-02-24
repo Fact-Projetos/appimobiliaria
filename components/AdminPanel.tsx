@@ -157,7 +157,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
 
   const getContractHTML = (client: Client) => {
     // Encontrar o imóvel relacionado para pegar valores de IPTU, condomínio, etc.
-    const property = properties.find(p => p.title === client.property_interest);
+    const property = properties.find(p =>
+      p.title.trim().toLowerCase() === client.property_interest?.trim().toLowerCase() ||
+      p.id === client.property_interest
+    );
 
     // Preparar dados
     const locatorName = client.locator_name || 'NASCIMENTO NEGÓCIOS IMOBILIÁRIOS';
@@ -667,7 +670,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                           <span className="text-[10px] font-normal text-gray-400">{p.ownerPhone || '-'}</span>
                         </td>
                         <td className="p-4 text-sm text-gray-500">{p.operation}</td>
-                        <td className="p-4 text-sm font-bold text-[#4A5D23]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(p.price)}</td>
+                        <td className="p-4 text-sm font-bold text-[#4A5D23]">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(p.price + (p.condoPrice || 0) + (p.iptuPrice || 0))}</td>
                         <td className="p-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase tracking-wide">Ativo</span></td>
                         <td className="p-4 text-sm">
                           <button
