@@ -479,6 +479,177 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     }
   };
 
+  const generateIncomeReportPDF = async (report: IncomeReport) => {
+    // Buscar imóvel e cliente para pegar dados extras como CPF
+    const property = properties.find(p => p.id === report.property_id || p.title === report.property_title);
+
+    // Buscar cliente (locatário)
+    const { data: clientsData } = await supabase
+      .from('clients')
+      .select('*')
+      .or(`property_interest.eq.${report.property_id},property_interest.eq.${report.property_title}`)
+      .limit(1);
+
+    const client = clientsData && clientsData.length > 0 ? clientsData[0] : null;
+
+    const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+
+    // Calcular totais
+    const totalBruto = report.monthly_data.reduce((acc, curr) => acc + (curr.paid_value || 0), 0);
+    const totalComissao = report.monthly_data.reduce((acc, curr) => acc + (curr.commission || 0), 0);
+    const totalIrrf = report.monthly_data.reduce((acc, curr) => acc + (curr.irrf || 0), 0);
+
+    const year = report.contract_date ? new Date(report.contract_date).getFullYear() : new Date().getFullYear();
+
+    const html = `
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 10pt; color: #333; margin: 2cm; padding: 0; }
+          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+          .company-name { font-weight: bold; font-size: 14pt; }
+          .report-title { text-align: right; font-weight: bold; font-size: 9pt; text-transform: uppercase; }
+          
+          .section { margin-bottom: 20px; }
+          .section-title { font-weight: bold; font-size: 10pt; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+          
+          .data-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+          .data-table td { padding: 4px 0; }
+          .label { font-size: 8pt; color: #666; display: block; text-transform: uppercase; }
+          .value { font-size: 10pt; font-weight: bold; }
+
+          .income-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+          .income-table th { background: #f2f2f2; font-size: 8pt; text-transform: uppercase; padding: 6px; border: 1px solid #ccc; text-align: center; }
+          .income-table td { padding: 5px; border: 1px solid #ccc; font-size: 9pt; text-align: center; }
+          .income-table .month-col { text-align: left; font-weight: bold; width: 100px; }
+          .income-table .total-row { font-weight: bold; background: #f9f9f9; }
+
+          .complementary { font-size: 9pt; line-height: 1.4; }
+          .signature-section { margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; }
+          .signature-box { border-top: 1px solid #000; width: 250px; text-align: center; padding-top: 5px; }
+
+          @media print {
+            body { margin: 0; padding: 1.5cm; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="company-name">NASCIMENTO NEGÓCIOS IMOBILIÁRIOS</div>
+          <div class="report-title">
+            COMPROVANTE ANUAL DE<br>
+            RENDIMENTO DE ALUGUÉIS<br>
+            Ano-calendário: ${year}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">1 - Beneficiário do Rendimento (Locador)</div>
+          <table class="data-table">
+            <tr>
+              <td width="70%">
+                <span class="label">Nome / Nome Empresarial</span>
+                <span class="value">${report.locator_name}</span>
+              </td>
+              <td>
+                <span class="label">CPF / CNPJ</span>
+                <span class="value">${property?.ownerCpf || '-'}</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-title">2 - Fonte Pagadora (Locatário)</div>
+          <table class="data-table">
+            <tr>
+              <td width="70%">
+                <span class="label">Nome / Nome Empresarial</span>
+                <span class="value">${report.tenant_name}</span>
+              </td>
+              <td>
+                <span class="label">CPF / CNPJ</span>
+                <span class="value">${client?.cpf || '-'}</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-title">3 - Rendimentos (Em Reais)</div>
+          <table class="income-table">
+            <thead>
+              <tr>
+                <th class="month-col">Mês</th>
+                <th>Rend. Bruto</th>
+                <th>Valor Comissão</th>
+                <th>IR</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${report.monthly_data.map(m => `
+                <tr>
+                  <td class="month-col">${m.month}</td>
+                  <td>${formatCurrency(m.paid_value || 0)}</td>
+                  <td>${formatCurrency(m.commission || 0)}</td>
+                  <td>${formatCurrency(m.irrf || 0)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td class="month-col">TOTAL</td>
+                <td>${formatCurrency(totalBruto)}</td>
+                <td>${formatCurrency(totalComissao)}</td>
+                <td>${formatCurrency(totalIrrf)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-title">4 - Informações Complementares</div>
+          <div class="complementary">
+            <strong>CNPJ da Administradora do Imóvel (Imobiliária):</strong> 00.000.000/0001-00<br>
+            <strong>Nome:</strong> NASCIMENTO NEGÓCIOS IMOBILIÁRIOS<br>
+            <strong>Endereço:</strong> ${companySettings?.address || 'Avenida Exemplo'}, ${companySettings?.number || '0'} - ${companySettings?.city || 'Cidade'} / ${companySettings?.state || 'UF'}<br>
+            <br>
+            <strong>Dados do Imóvel</strong><br>
+            Número do Contrato: ${report.id || '-'}<br>
+            Data do Contrato: ${report.contract_date ? new Date(report.contract_date).toLocaleDateString('pt-BR') : '-'}<br>
+            Tipo do Imóvel: ${property?.type || 'URBANO'}<br>
+            Endereço do Imóvel: ${property?.street || ''}, ${property?.number || ''} ${property?.complement || ''} - ${property?.neighborhood || ''}<br>
+            Município: ${property?.city || '-'} | UF: ${property?.state || '-'} | CEP: ${property?.zip || '-'}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">5 - Responsável pelas Informações</div>
+          <div class="signature-section">
+            <div style="font-size: 9pt;">
+              <strong>Nome:</strong> FLAVIA CATARINA NASCIMENTO GONÇALVES<br>
+              <strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}
+            </div>
+            <div class="signature-box">
+              Assinatura
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 700);
+    }
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const activeItem = menuItems.find(i => i.id === currentTab);
@@ -848,7 +1019,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                             report.monthly_data.reduce((acc, curr) => acc + (curr.paid_value || 0), 0)
                           )}
                         </td>
-                        <td className="p-4 text-right flex gap-3 justify-end">
+                        <td className="p-4 text-right flex gap-3 justify-end items-center">
+                          <button
+                            onClick={() => generateIncomeReportPDF(report)}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                            title="Baixar PDF"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                          </button>
                           <button
                             onClick={() => { setEditingIncomeReport(report); setIsAddingIncomeReport(true); }}
                             className="text-gray-400 hover:text-[#4A5D23] transition-colors"
