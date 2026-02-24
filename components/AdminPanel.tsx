@@ -826,7 +826,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                       <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Locatário (Fonte Pagadora)</th>
                       <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imóvel</th>
                       <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Data Contrato</th>
-                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Rendimento Total</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Valor Contrato</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Rendimento</th>
                       <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Ações</th>
                     </tr>
                   </thead>
@@ -837,6 +838,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                         <td className="p-4 text-sm text-gray-500">{report.tenant_name}</td>
                         <td className="p-4 text-sm text-gray-500 italic">{report.property_title}</td>
                         <td className="p-4 text-sm text-gray-500">{new Date(report.contract_date).toLocaleDateString('pt-BR')}</td>
+                        <td className="p-4 text-sm font-medium text-gray-600">
+                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                            report.monthly_data.reduce((acc, curr) => acc + (curr.contract_value || 0), 0)
+                          )}
+                        </td>
                         <td className="p-4 text-sm font-bold text-[#4A5D23]">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
                             report.monthly_data.reduce((acc, curr) => acc + (curr.paid_value || 0), 0)
