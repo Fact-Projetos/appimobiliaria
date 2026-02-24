@@ -53,9 +53,25 @@ const IncomeReportForm: React.FC<IncomeReportFormProps> = ({ properties, editing
             property_id: property.id,
             property_title: property.title,
             locator_name: property.ownerName || '',
-            // Try to find a client for this property to get the tenant name
         }));
         setShowSuggestions(false);
+
+        // Calculate the total from property (price + condo + iptu + fire + service)
+        const propertyTotal = (
+            (property.price || 0) +
+            (property.condoPrice || 0) +
+            (property.iptuPrice || 0) +
+            (property.fireInsurance || 0) +
+            (property.serviceCharge || 0)
+        );
+
+        if (!editingReport) {
+            setMonthlyData(prev => prev.map(month => ({
+                ...month,
+                contract_value: propertyTotal
+            })));
+        }
+
         fetchTenantForProperty(property.id, property.title);
     };
 
@@ -75,15 +91,6 @@ const IncomeReportForm: React.FC<IncomeReportFormProps> = ({ properties, editing
                 start_date: client.contract_start_date || prev.start_date,
                 end_date: client.contract_end_date || prev.end_date
             }));
-
-            // Auto-fill contract value for all months if it's a new report
-            if (!editingReport) {
-                const contractValue = parseFloat(client.contract_value.toString()) || 0;
-                setMonthlyData(prev => prev.map(month => ({
-                    ...month,
-                    contract_value: contractValue
-                })));
-            }
         }
     };
 
