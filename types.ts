@@ -105,6 +105,29 @@ export interface Filters {
   operation: OperationType | 'Todos';
 }
 
+export interface MonthlyIncomeData {
+  month: string;
+  due_day?: number;
+  payment_date?: string;
+  contract_value: number;
+  paid_value: number;
+  commission: number;
+  irrf: number;
+}
+
+export interface IncomeReport {
+  id: number;
+  property_id: string;
+  property_title: string;
+  locator_name: string;
+  tenant_name: string;
+  contract_date: string;
+  start_date: string;
+  end_date: string;
+  monthly_data: MonthlyIncomeData[];
+  created_at?: string;
+}
+
 export const CITIES = ['São Paulo', 'Rio de Janeiro', 'Curitiba', 'Belo Horizonte'];
 export const NEIGHBORHOODS = ['Centro', 'Jardins', 'Barra da Tijuca', 'Batel', 'Savassi', 'Vila Madalena'];
 export const PROPERTY_TYPES: PropertyType[] = ['Casa', 'Apartamento', 'Terreno', 'Comercial'];

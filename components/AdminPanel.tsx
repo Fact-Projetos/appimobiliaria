@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
-import { Property, Client, Contact, CompanySettings } from '../types';
+
 import { supabase } from '../lib/supabaseClient';
 import PropertyForm from './admin/PropertyForm';
 import ClientForm from './admin/ClientForm';
 import MyDataForm from './admin/MyDataForm';
+import IncomeReportForm from './admin/IncomeReportForm';
+import { Property, Client, Contact, CompanySettings, IncomeReport } from '../types';
 
 interface AdminPanelProps {
   onLogout: () => void;
@@ -14,7 +15,7 @@ interface AdminPanelProps {
   companySettings: CompanySettings | null;
 }
 
-type AdminTab = 'overview' | 'properties' | 'clients' | 'contacts' | 'my-data';
+type AdminTab = 'overview' | 'properties' | 'clients' | 'income-reports' | 'contacts' | 'my-data';
 
 const menuItems = [
   {
@@ -30,6 +31,11 @@ const menuItems = [
   {
     id: 'clients', label: 'Contratos', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+    )
+  },
+  {
+    id: 'income-reports', label: 'Informe de Rendimentos', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
     )
   },
   {
@@ -49,6 +55,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
   const [isAddingProperty, setIsAddingProperty] = useState(false);
   const [isAddingClient, setIsAddingClient] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [isAddingIncomeReport, setIsAddingIncomeReport] = useState(false);
+  const [editingIncomeReport, setEditingIncomeReport] = useState<IncomeReport | null>(null);
 
   // Estado para controlar qual imóvel está sendo editado (null = criando novo)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -59,6 +67,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
   // Estado para lista de contatos do site
   const [contactsList, setContactsList] = useState<Contact[]>([]);
 
+  // Estado para lista de informes
+  const [incomeReports, setIncomeReports] = useState<IncomeReport[]>([]);
+
   // Carregar dados ao iniciar ou mudar de aba
   useEffect(() => {
     if (currentTab === 'clients' || currentTab === 'overview') {
@@ -67,7 +78,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
     if (currentTab === 'contacts') {
       fetchContacts();
     }
+    if (currentTab === 'income-reports') {
+      fetchIncomeReports();
+    }
   }, [currentTab]);
+
+  const fetchIncomeReports = async () => {
+    try {
+      const { data, error } = await (supabase as any).from('income_reports').select('*').order('id', { ascending: false });
+      if (!error && data) {
+        setIncomeReports(data as unknown as IncomeReport[]);
+      }
+    } catch (e) {
+      console.log('Tabela income_reports possivelmente não existe ainda.');
+    }
+  };
+
+  const deleteIncomeReport = async (id: number) => {
+    if (confirm('Deseja excluir este informe?')) {
+      const { error } = await (supabase as any).from('income_reports').delete().eq('id', id);
+      if (!error) {
+        setIncomeReports(incomeReports.filter(r => r.id !== id));
+      } else {
+        alert('Erro ao excluir: ' + error.message);
+      }
+    }
+  };
 
   const fetchClients = async () => {
     try {
@@ -546,6 +582,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
               onPropertiesUpdate();
             }}
           />
+        ) : isAddingIncomeReport ? (
+          <IncomeReportForm
+            properties={properties}
+            editingReport={editingIncomeReport}
+            onCancel={() => { setIsAddingIncomeReport(false); setEditingIncomeReport(null); }}
+            onSuccess={() => { setIsAddingIncomeReport(false); setEditingIncomeReport(null); fetchIncomeReports(); }}
+          />
         ) : currentTab === 'my-data' ? (
           <MyDataForm onSuccess={onSettingsUpdate} />
         ) : (
@@ -567,6 +610,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                 <button onClick={() => { setEditingClient(null); setIsAddingClient(true); }} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                   Novo Cliente
+                </button>
+              )}
+
+              {currentTab === 'income-reports' && (
+                <button onClick={() => { setEditingIncomeReport(null); setIsAddingIncomeReport(true); }} className="bg-[#4A5D23] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 w-full md:w-auto">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                  Novo Informe
                 </button>
               )}
             </header>
@@ -762,6 +812,55 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
                       </tr>
                     )) : (
                       <tr><td colSpan={5} className="p-8 text-center text-gray-400">Nenhum cliente cadastrado.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {currentTab === 'income-reports' && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
+                  <thead className="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Locador (Beneficiário)</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Locatário (Fonte Pagadora)</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imóvel</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Data Contrato</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Rendimento Total</th>
+                      <th className="p-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {incomeReports.length > 0 ? incomeReports.map(report => (
+                      <tr key={report.id} className="hover:bg-gray-50">
+                        <td className="p-4 text-sm font-medium">{report.locator_name}</td>
+                        <td className="p-4 text-sm text-gray-500">{report.tenant_name}</td>
+                        <td className="p-4 text-sm text-gray-500 italic">{report.property_title}</td>
+                        <td className="p-4 text-sm text-gray-500">{new Date(report.contract_date).toLocaleDateString('pt-BR')}</td>
+                        <td className="p-4 text-sm font-bold text-[#4A5D23]">
+                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                            report.monthly_data.reduce((acc, curr) => acc + (curr.paid_value || 0), 0)
+                          )}
+                        </td>
+                        <td className="p-4 text-right flex gap-3 justify-end">
+                          <button
+                            onClick={() => { setEditingIncomeReport(report); setIsAddingIncomeReport(true); }}
+                            className="text-gray-400 hover:text-[#4A5D23] transition-colors"
+                            title="Editar"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                          </button>
+                          <button
+                            onClick={() => deleteIncomeReport(report.id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                            title="Excluir"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </td>
+                      </tr>
+                    )) : (
+                      <tr><td colSpan={6} className="p-8 text-center text-gray-400">Nenhum informe de rendimentos encontrado.</td></tr>
                     )}
                   </tbody>
                 </table>
