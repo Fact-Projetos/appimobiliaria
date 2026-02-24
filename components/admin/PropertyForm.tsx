@@ -37,7 +37,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
         furnished: false,
         ownerName: '',
         ownerCpf: '',
-        ownerPhone: ''
+        ownerPhone: '',
+        ownerEmail: ''
     });
 
     // File states for uploads
@@ -102,7 +103,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 furnished: editingProperty.furnished || false,
                 ownerName: editingProperty.ownerName || '',
                 ownerCpf: editingProperty.ownerCpf || '',
-                ownerPhone: editingProperty.ownerPhone || ''
+                ownerPhone: editingProperty.ownerPhone || '',
+                ownerEmail: editingProperty.ownerEmail || ''
             });
 
             setExistingGallery(editingProperty.galleryUrls ? editingProperty.galleryUrls.split(',').filter(url => url.length > 0) : []);
@@ -212,7 +214,8 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                 inspection_urls: inspectionUrlString,
                 owner_name: formData.ownerName,
                 owner_cpf: formData.ownerCpf,
-                owner_phone: formData.ownerPhone
+                owner_phone: formData.ownerPhone,
+                owner_email: formData.ownerEmail
             };
 
             let error;
@@ -479,6 +482,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ editingProperty, onCancel, 
                             <div>
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Telefone</label>
                                 <input type="text" name="ownerPhone" value={formData.ownerPhone} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="(00) 00000-0000" />
+                            </div>
+                            <div className="md:col-span-3">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Email</label>
+                                <input type="email" name="ownerEmail" value={formData.ownerEmail} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="email@exemplo.com" />
                             </div>
                         </div>
                     </div>

@@ -32,6 +32,7 @@ export interface Property {
   ownerName?: string;
   ownerCpf?: string;
   ownerPhone?: string;
+  ownerEmail?: string;
 }
 
 export interface Client {

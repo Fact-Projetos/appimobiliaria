@@ -71,11 +71,20 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
     const [selectedPropertyCondo, setSelectedPropertyCondo] = useState('');
     const [selectedPropertyIptu, setSelectedPropertyIptu] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [showLocatorSuggestions, setShowLocatorSuggestions] = useState(false);
     const [loading, setLoading] = useState(false);
 
     // Filter properties for auto-complete
     const filteredProperties = propertySearch.length > 0
         ? properties.filter(p => p.title.toLowerCase().includes(propertySearch.toLowerCase()))
+        : [];
+
+    const locators = Array.from(new Set(properties.filter(p => p.ownerName).map(p => p.ownerName))).map(name => {
+        return properties.find(p => p.ownerName === name);
+    });
+
+    const filteredLocators = clientData.locator_name.length > 0
+        ? locators.filter(l => l?.ownerName?.toLowerCase().includes(clientData.locator_name.toLowerCase()))
         : [];
 
     const handleSelectProperty = (property: Property) => {
@@ -87,6 +96,17 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
         // Auto-fill contract value
         setClientData(prev => ({ ...prev, contract_value: property.price.toString() }));
         setShowSuggestions(false);
+    };
+
+    const handleSelectLocator = (property: Property) => {
+        setClientData(prev => ({
+            ...prev,
+            locator_name: property.ownerName || '',
+            locator_cpf: property.ownerCpf || '',
+            locator_email: property.ownerEmail || '',
+            locator_phone: property.ownerPhone || ''
+        }));
+        setShowLocatorSuggestions(false);
     };
 
     // Auto-fetch tenant address when CEP changes
@@ -212,9 +232,34 @@ const ClientForm: React.FC<ClientFormProps> = ({ properties, onCancel, onSuccess
                     </div>
                     <div className="p-5 space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                            <div className="md:col-span-2">
+                            <div className="md:col-span-2 relative">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Nome/Razão Social</label>
-                                <input type="text" name="locator_name" value={clientData.locator_name} onChange={handleChange} className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs" placeholder="Nome do Locador" />
+                                <input
+                                    type="text"
+                                    name="locator_name"
+                                    value={clientData.locator_name}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setShowLocatorSuggestions(true);
+                                    }}
+                                    onFocus={() => setShowLocatorSuggestions(true)}
+                                    className="w-full p-2 bg-gray-50 border border-transparent rounded-lg focus:ring-2 focus:ring-[#4A5D23] outline-none text-xs"
+                                    placeholder="Nome do Locador"
+                                />
+                                {showLocatorSuggestions && filteredLocators.length > 0 && (
+                                    <ul className="absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        {filteredLocators.map((prop, idx) => prop && (
+                                            <li
+                                                key={idx}
+                                                onClick={() => handleSelectLocator(prop)}
+                                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0"
+                                            >
+                                                <p className="text-sm font-bold text-black">{prop.ownerName}</p>
+                                                <p className="text-[10px] text-gray-500">CPF: {prop.ownerCpf || 'N/A'}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                             <div>
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">CNPJ/CPF</label>
