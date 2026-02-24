@@ -60,14 +60,30 @@ const IncomeReportForm: React.FC<IncomeReportFormProps> = ({ properties, editing
     };
 
     const fetchTenantForProperty = async (propertyId: string, propertyTitle: string) => {
-        const { data, error } = await supabase
+        const { data } = await (supabase as any)
             .from('clients')
-            .select('name')
+            .select('*')
             .or(`property_interest.eq.${propertyId},property_interest.eq.${propertyTitle}`)
             .limit(1);
 
         if (data && data.length > 0) {
-            setFormData(prev => ({ ...prev, tenant_name: data[0].name }));
+            const client = data[0];
+            setFormData(prev => ({
+                ...prev,
+                tenant_name: client.name,
+                contract_date: client.contract_start_date || prev.contract_date,
+                start_date: client.contract_start_date || prev.start_date,
+                end_date: client.contract_end_date || prev.end_date
+            }));
+
+            // Auto-fill contract value for all months if it's a new report
+            if (!editingReport) {
+                const contractValue = parseFloat(client.contract_value.toString()) || 0;
+                setMonthlyData(prev => prev.map(month => ({
+                    ...month,
+                    contract_value: contractValue
+                })));
+            }
         }
     };
 
@@ -273,6 +289,23 @@ const IncomeReportForm: React.FC<IncomeReportFormProps> = ({ properties, editing
                                 </tr>
                             ))}
                         </tbody>
+                        <tfoot className="bg-gray-100 font-bold border-t-2 border-[#4A5D23]">
+                            <tr>
+                                <td colSpan={3} className="p-3 text-right text-[10px] uppercase tracking-widest text-[#4A5D23]">Total</td>
+                                <td className="p-3 text-xs text-[#4A5D23]">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyData.reduce((acc, curr) => acc + (curr.contract_value || 0), 0))}
+                                </td>
+                                <td className="p-3 text-xs text-[#4A5D23]">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyData.reduce((acc, curr) => acc + (curr.paid_value || 0), 0))}
+                                </td>
+                                <td className="p-3 text-xs text-[#4A5D23]">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyData.reduce((acc, curr) => acc + (curr.commission || 0), 0))}
+                                </td>
+                                <td className="p-3 text-xs text-[#4A5D23]">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyData.reduce((acc, curr) => acc + (curr.irrf || 0), 0))}
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
