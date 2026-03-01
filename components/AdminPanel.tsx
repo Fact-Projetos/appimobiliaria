@@ -429,6 +429,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
         <p class="clause-text">O foro deste contrato, é o da Comarca de Barueri/SP para dirimir eventuais questões emergentes do presente instrumento.</p>
 
         <div class="clause-title">CLÁUSULA DÉCIMA QUARTA – DISPOSIÇÕES FINAIS</div>
+        <p class="clause-text">As partes reconhecem que a presente locação foi intermediada por Adriana Nascimento Gonçalves, inscrito(a) no CRECI nº 5258, e no CPF nº 662.853.995-49, sendo certo que eventuais direitos decorrentes da intermediação se encontram regulados por instrumento próprio firmado entre o LOCADOR e o INTERMEDIADOR, ao qual este contrato não se vincula, mas cuja existência é expressamente reconhecida para todos os fins de direito.</p>
+
         <p class="clause-text">O LOCADOR poderá solicitar a desocupação do imóvel em caso de venda, conforme previsto no artigo 27 da Lei nº 8.245/1991. Para tanto, o LOCADOR deverá notificar o LOCATÁRIO com antecedência mínima de 90 dias, por escrito, especificando a intenção de venda e a necessidade de desocupação.</p>
         
         <p class="clause-text">Caso o LOCATÁRIO não desocupe o imóvel dentro do prazo estipulado, o LOCADOR poderá ingressar com ação de despejo, conforme previsto na Lei do Inquilinato, sem que haja necessidade de qualquer outra indenização ao LOCADOR.</p>
