@@ -128,6 +128,25 @@ export interface IncomeReport {
   created_at?: string;
 }
 
-export const CITIES = ['São Paulo', 'Rio de Janeiro', 'Curitiba', 'Belo Horizonte'];
+export type FinancialOrigin = 'Airbnb' | 'Por fora';
+
+export interface FinancialEntry {
+  id: number;
+  origin: FinancialOrigin;
+  entry_date: string; // YYYY-MM-DD
+  property_title: string;
+  days: number;
+  gross_value: number;
+  cleaning: number;
+  maintenance: number;
+  platform_fees: number;
+  net_value: number;
+  period_start?: string | null;
+  period_end?: string | null;
+  notes?: string | null;
+  created_at?: string;
+}
+
+export const CITIES =['São Paulo', 'Rio de Janeiro', 'Curitiba', 'Belo Horizonte'];
 export const NEIGHBORHOODS = ['Centro', 'Jardins', 'Barra da Tijuca', 'Batel', 'Savassi', 'Vila Madalena'];
 export const PROPERTY_TYPES: PropertyType[] = ['Casa', 'Apartamento', 'Terreno', 'Comercial'];

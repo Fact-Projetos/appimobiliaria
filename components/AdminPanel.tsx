@@ -5,6 +5,7 @@ import PropertyForm from './admin/PropertyForm';
 import ClientForm from './admin/ClientForm';
 import MyDataForm from './admin/MyDataForm';
 import IncomeReportForm from './admin/IncomeReportForm';
+import FinancialPanel from './admin/FinancialPanel';
 import { Property, Client, Contact, CompanySettings, IncomeReport } from '../types';
 
 interface AdminPanelProps {
@@ -15,7 +16,7 @@ interface AdminPanelProps {
   companySettings: CompanySettings | null;
 }
 
-type AdminTab = 'overview' | 'properties' | 'clients' | 'income-reports' | 'contacts' | 'my-data';
+type AdminTab = 'overview' | 'properties' | 'clients' | 'income-reports' | 'financial' | 'contacts' | 'my-data';
 
 const menuItems = [
   {
@@ -36,6 +37,11 @@ const menuItems = [
   {
     id: 'income-reports', label: 'Informe de Rendimentos', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+    )
+  },
+  {
+    id: 'financial', label: 'Financeiro', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
     )
   },
   {
@@ -776,6 +782,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onLogout, properties, onPropert
           />
         ) : currentTab === 'my-data' ? (
           <MyDataForm onSuccess={onSettingsUpdate} />
+        ) : currentTab === 'financial' ? (
+          <FinancialPanel properties={properties} />
         ) : (
           <>
             <header className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
